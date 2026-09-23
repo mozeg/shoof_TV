@@ -16,12 +16,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
-  <!-- Plyr.js CSS -->
-  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-
-  <!-- Google Identity Services (تسجيل الدخول بحساب Google) -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-
   <script>
     tailwind.config = {
       theme: {
@@ -57,10 +51,6 @@
       background: linear-gradient(180deg, rgba(7, 19, 28, 0.4) 0%, rgba(7, 19, 28, 0.95) 85%, #07131C 100%),
                   linear-gradient(90deg, rgba(7, 19, 28, 0.9) 0%, rgba(7, 19, 28, 0.3) 50%, rgba(7, 19, 28, 0.8) 100%);
     }
-    :root {
-      --plyr-color-main: #E7B86A;
-      --plyr-video-control-color: #F4F1E9;
-    }
     .spinner {
       width: 18px; height: 18px; border-radius: 50%;
       border: 2px solid rgba(231,184,106,0.25); border-top-color: #E7B86A;
@@ -76,8 +66,6 @@
   <!-- ================= NAVBAR ================= -->
   <header class="fixed top-0 left-0 right-0 z-50 bg-brandBg/90 backdrop-blur-md border-b border-brandBorder/50 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-
-      <!-- Logo & Navigation -->
       <div class="flex items-center gap-8">
         <a href="#" id="logoLink" class="flex items-center gap-2.5 group">
           <div class="w-9 h-9 rounded-xl bg-brandGold/10 border border-brandGold/30 flex items-center justify-center text-brandGold group-hover:bg-brandGold group-hover:text-brandBg transition-all shadow-md">
@@ -96,7 +84,6 @@
         </nav>
       </div>
 
-      <!-- Action Icons -->
       <div class="flex items-center gap-4">
         <button id="searchBtn" class="w-10 h-10 rounded-full bg-brandSec hover:bg-brandCard flex items-center justify-center text-brandMuted hover:text-brandGold transition-all">
           <i class="fa-solid fa-magnifying-glass"></i>
@@ -107,7 +94,6 @@
           <span id="notifBadge" class="hidden absolute top-2 left-2 w-2 h-2 rounded-full bg-brandGold shadow-[0_0_8px_#E7B86A]"></span>
         </button>
 
-        <!-- منطقة الحساب -->
         <div id="accountArea"></div>
       </div>
     </div>
@@ -134,7 +120,7 @@
       <div class="max-w-2xl space-y-4">
         <div class="flex items-center gap-3 text-xs font-bold">
           <span class="bg-brandGold text-brandBg px-2.5 py-1 rounded-md uppercase tracking-wider">حصرياً على شوف</span>
-          <span class="bg-brandCard text-brandMuted border border-brandBorder px-2.5 py-1 rounded-md"><i class="fa-solid fa-star text-brandGold ml-1"></i> IMDb <span id="heroRating">9.2</span></span>
+          <span class="bg-brandCard text-brandMuted border border-brandBorder px-2.5 py-1 rounded-md"><i class="fa-solid fa-star text-brandGold ml-1"></i> IMDb <span id="heroRating">8.9</span></span>
           <span id="heroMeta" class="text-brandMuted">2026 • دراما / ملحمة</span>
         </div>
 
@@ -169,7 +155,7 @@
       <section>
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
-            <span class="w-2 h-6 bg-brandGold rounded-full"></span> الأكثر رواجاً (عبر Vidsrc & TMDb)
+            <span class="w-2 h-6 bg-brandGold rounded-full"></span> الأكثر رواجاً (عبر Vidsrc)
           </h2>
           <span id="trendingSpinner" class="spinner"></span>
         </div>
@@ -242,13 +228,11 @@
         <i class="fa-solid fa-xmark text-lg"></i>
       </button>
 
-      <!-- Backdrop Banner -->
       <div class="relative h-64 sm:h-80 w-full">
         <img id="modalBackdrop" src="" class="w-full h-full object-cover">
         <div class="absolute inset-0 bg-gradient-to-t from-brandSec via-brandSec/50 to-transparent"></div>
       </div>
 
-      <!-- Details Content -->
       <div class="p-6 sm:p-8 -mt-20 relative z-20 space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -277,7 +261,6 @@
           <p id="modalCast" class="text-sm text-brandText">الممثلون...</p>
         </div>
 
-        <!-- Seasons & Episodes Section (Only visible for series) -->
         <div id="seasonsSection" class="hidden space-y-4 pt-4 border-t border-brandBorder">
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-bold text-brandText flex items-center gap-2">
@@ -288,7 +271,6 @@
           <div id="episodesContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- Similar Content Section -->
         <div class="pt-4 border-t border-brandBorder">
           <h3 class="text-base font-bold text-brandText mb-4">أعمال مشابهة</h3>
           <div id="similarContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
@@ -341,7 +323,7 @@
       <div>
         <p class="text-brandText font-bold text-lg mb-1">شوف | SHOOAF</p>
         <p class="text-xs text-brandMuted">منصة البث السينمائية العربية الأولى للإنتاجات العراقية والعالمية عبر Vidsrc.</p>
-        <p class="text-[10px] text-brandMuted/60 mt-2">تُستخدم بيانات الأفلام من TMDb ومشغل الفيديو من vidsrc.to.</p>
+        <p class="text-[10px] text-brandMuted/60 mt-2">تُستخدم بيانات الأفلام ومشغل الفيديو من vidsrc.to.</p>
       </div>
       <div class="flex items-center gap-6 text-xs text-brandMuted">
         <a href="#" class="hover:text-brandGold transition-colors">سياسة الخصوصية</a>
@@ -352,9 +334,6 @@
   </footer>
 
   <script>
-  /* =========================================================================
-     إعدادات عامة
-     ========================================================================= */
   const CONFIG = {
     TMDB_API_KEY: 'c1532aa2e726cf64009b81018359068c',
     TMDB_LANG: 'ar',
@@ -363,24 +342,21 @@
 
   const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
   const TMDB_IMG_BIG = 'https://image.tmdb.org/t/p/original';
-  const isTmdbConfigured = () => CONFIG.TMDB_API_KEY && CONFIG.TMDB_API_KEY !== 'c1532aa2e726cf64009b81018359068c';
-  const isGoogleConfigured = () => CONFIG.GOOGLE_CLIENT_ID && CONFIG.GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+  const isTmdbConfigured = () => CONFIG.TMDB_API_KEY && CONFIG.TMDB_API_KEY !== 'YOUR_TMDB_API_KEY';
 
   const GENRE_MAP = {
     'أكشن': 28, 'كوميديا': 35, 'دراما': 18, 'رعب': 27, 'إثارة': 53, 'وثائقي': 99
   };
 
-  /* =========================================================================
-     قاعدة بيانات محلية للأفلام العراقية المميزة (بدون أفلام تجريبية)
-     ========================================================================= */
-  const mediaDatabase = [
+  // قاعدة بيانات احتياطية تضم أفلام ومسلسلات جاهزة للعمل فوراً عبر Vidsrc
+  const fallbackMediaDatabase = [
     {
       id: 1, title: 'السطح', type: 'movie', category: 'دراما', year: '2026', rating: '8.9',
       poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop',
       backdrop: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1200&auto=format&fit=crop',
       description: 'في قلب بغداد، تتقاطع مصائر مجموعة من الأشخاص في يوم واحد، لنكتشف أسرار المدينة وتاريخها المليء بالأمل والتحديات.',
       cast: ['أحمد السعدي', 'فاطمة العلي', 'محمد البصري'],
-      tmdbId: 550 // مثال لربط فيلم عراقي بـ vidsrc عبر معرف شبيه أو فيلم داعم
+      tmdbId: 550
     },
     {
       id: 2, title: 'رحلة بغداد', type: 'movie', category: 'أفلام عراقية', year: '2025', rating: '8.7',
@@ -389,12 +365,35 @@
       description: 'توثيق بصري ودرامي فريد لأزقة بغداد العتيقة وحكايات أهلها الطيبين.',
       cast: ['سناء عبدالرحمن', 'مهدي الهلالي'],
       tmdbId: 238
+    },
+    {
+      id: 3, title: 'Inception', type: 'movie', category: 'أكشن', year: '2010', rating: '8.8',
+      poster: 'https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg',
+      backdrop: 'https://image.tmdb.org/t/p/original/s3TBrRGB1iv7DICDrpIXfZjXkMA.jpg',
+      description: 'لص يسرق أسرار الشركات من خلال اختراق الأحلام يواجه مهمة زرع فكرة في عقل رئيس شركة كبرى.',
+      cast: ['Leonardo DiCaprio', 'Joseph Gordon-Levitt', 'Elliot Page'],
+      tmdbId: 27205
+    },
+    {
+      id: 4, title: 'Interstellar', type: 'movie', category: 'دراما', year: '2014', rating: '8.7',
+      poster: 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
+      backdrop: 'https://image.tmdb.org/t/p/original/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg',
+      description: 'مجموعة من رواد الفضاء يرحلون عبر ثقب وادي كوني للبحث عن وطن بديل للبشرية.',
+      cast: ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain'],
+      tmdbId: 157336
+    },
+    {
+      id: 5, title: 'Breaking Bad', type: 'series', category: 'مسلسلات', year: '2008', rating: '9.5',
+      poster: 'https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',
+      backdrop: 'https://image.tmdb.org/t/p/original/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg',
+      description: 'معلم كيمياء يعاني من مرض السرطان يتحول إلى إنتاج وبيع المخدرات لتأمين مستقبل عائلته.',
+      cast: ['Bryan Cranston', 'Aaron Paul'],
+      tmdbId: 1396,
+      tvId: 1396,
+      tvSeasons: [{ season_number: 1, name: 'الموسم الأول' }, { season_number: 2, name: 'الموسم الثاني' }]
     }
   ];
 
-  /* =========================================================================
-     حالة التطبيق
-     ========================================================================= */
   const state = {
     items: {},
     watchlist: JSON.parse(localStorage.getItem('shoof_watchlist') || '[]'),
@@ -403,10 +402,10 @@
 
   function saveWatchlist() { localStorage.setItem('shoof_watchlist', JSON.stringify(state.watchlist)); }
 
-  function localToUnified(item) {
+  function mediaToUnified(item) {
     return {
-      uid: 'local-' + item.id,
-      source: 'local',
+      uid: (item.source || 'local') + '-' + item.id,
+      source: item.source || 'local',
       raw: item,
       title: item.title,
       type: item.type,
@@ -416,8 +415,10 @@
       poster: item.poster,
       backdrop: item.backdrop,
       description: item.description,
-      cast: item.cast,
-      tmdbId: item.tmdbId
+      cast: item.cast || [],
+      tmdbId: item.tmdbId,
+      tvId: item.tvId || item.tmdbId,
+      tvSeasons: item.tvSeasons || [{ season_number: 1, name: 'الموسم 1' }]
     };
   }
 
@@ -430,6 +431,7 @@
       source: 'tmdb',
       tmdbType: type,
       tmdbId: raw.id,
+      tvId: raw.id,
       title,
       type: type === 'tv' ? 'series' : 'movie',
       category: type === 'tv' ? 'مسلسلات' : 'أفلام',
@@ -438,15 +440,13 @@
       poster: raw.poster_path ? TMDB_IMG + raw.poster_path : 'https://placehold.co/400x600/0E202D/E7B86A?text=شوف',
       backdrop: raw.backdrop_path ? TMDB_IMG_BIG + raw.backdrop_path : (raw.poster_path ? TMDB_IMG_BIG + raw.poster_path : ''),
       description: raw.overview || 'لا يوجد وصف متاح حالياً.',
-      cast: null
+      cast: null,
+      tvSeasons: [{ season_number: 1, name: 'الموسم 1' }]
     };
   }
 
   function registerItem(unified) { state.items[unified.uid] = unified; return unified; }
 
-  /* =========================================================================
-     TMDb API
-     ========================================================================= */
   async function tmdbFetch(path, params) {
     if (!isTmdbConfigured()) return null;
     const url = new URL('https://api.themoviedb.org/3/' + path);
@@ -458,7 +458,6 @@
       if (!res.ok) throw new Error('TMDb error ' + res.status);
       return await res.json();
     } catch (err) {
-      console.warn('تعذّر الاتصال بـ TMDb:', err);
       return null;
     }
   }
@@ -466,44 +465,69 @@
   async function loadTrending() {
     const spinner = document.getElementById('trendingSpinner');
     const container = document.getElementById('latestContainer');
-    if (!isTmdbConfigured()) {
-      spinner.classList.add('hidden');
-      return;
+    
+    let itemsList = [];
+    if (isTmdbConfigured()) {
+      const data = await tmdbFetch('trending/all/week');
+      if (data && data.results) {
+        itemsList = data.results.filter(r => r.media_type === 'movie' || r.media_type === 'tv').slice(0, 12).map(r => tmdbToUnified(r, r.media_type));
+      }
     }
-    const data = await tmdbFetch('trending/all/week');
+
+    // إذا فشل الاتصال بـ TMDb أو لم تتوفر نتائج، يتم عرض العناصر الاحتياطية تلقائياً
+    if (itemsList.length === 0) {
+      itemsList = fallbackMediaDatabase.map(i => ({ ...i, source: 'fallback' }));
+    }
+
     spinner.classList.add('hidden');
     container.innerHTML = '';
-    if (!data || !data.results) return;
-    data.results.filter(r => r.media_type === 'movie' || r.media_type === 'tv').slice(0, 12).forEach(r => {
-      const unified = registerItem(tmdbToUnified(r, r.media_type));
+    itemsList.forEach(item => {
+      const unified = registerItem(mediaToUnified(item));
       container.innerHTML += createCardHTML(unified);
     });
   }
 
   async function discoverByGenre(categoryName) {
     const genreId = GENRE_MAP[categoryName];
-    if (!genreId || !isTmdbConfigured()) return [];
-    const data = await tmdbFetch('discover/movie', { with_genres: genreId, sort_by: 'popularity.desc' });
-    if (!data || !data.results) return [];
-    return data.results.slice(0, 10).map(r => registerItem(tmdbToUnified(r, 'movie')));
+    let list = [];
+    if (genreId && isTmdbConfigured()) {
+      const data = await tmdbFetch('discover/movie', { with_genres: genreId, sort_by: 'popularity.desc' });
+      if (data && data.results) {
+        list = data.results.slice(0, 10).map(r => tmdbToUnified(r, 'movie'));
+      }
+    }
+    if (list.length === 0) {
+      list = fallbackMediaDatabase.filter(i => i.category === categoryName || categoryName === 'أفلام').map(i => ({ ...i, source: 'fallback' }));
+    }
+    return list.map(i => registerItem(mediaToUnified(i)));
   }
 
   async function discoverPopular(mediaType) {
-    if (!isTmdbConfigured()) return [];
-    const data = await tmdbFetch(mediaType === 'tv' ? 'tv/popular' : 'movie/popular');
-    if (!data || !data.results) return [];
-    return data.results.slice(0, 12).map(r => registerItem(tmdbToUnified(r, mediaType)));
+    let list = [];
+    if (isTmdbConfigured()) {
+      const data = await tmdbFetch(mediaType === 'tv' ? 'tv/popular' : 'movie/popular');
+      if (data && data.results) {
+        list = data.results.slice(0, 12).map(r => tmdbToUnified(r, mediaType));
+      }
+    }
+    if (list.length === 0) {
+      let typeMatch = mediaType === 'tv' ? 'series' : 'movie';
+      list = fallbackMediaDatabase.filter(i => i.type === typeMatch).map(i => ({ ...i, source: 'fallback' }));
+    }
+    return list.map(i => registerItem(mediaToUnified(i)));
   }
 
-  let searchDebounce = null;
   async function tmdbSearch(query) {
-    if (!isTmdbConfigured()) return [];
-    const data = await tmdbFetch('search/multi', { query, include_adult: 'false' });
-    if (!data || !data.results) return [];
-    return data.results
-      .filter(r => r.media_type === 'movie' || r.media_type === 'tv')
-      .slice(0, 15)
-      .map(r => registerItem(tmdbToUnified(r, r.media_type)));
+    let list = [];
+    if (isTmdbConfigured()) {
+      const data = await tmdbFetch('search/multi', { query, include_adult: 'false' });
+      if (data && data.results) {
+        list = data.results.filter(r => r.media_type === 'movie' || r.media_type === 'tv').slice(0, 12).map(r => tmdbToUnified(r, r.media_type));
+      }
+    }
+    const localMatches = fallbackMediaDatabase.filter(i => i.title.toLowerCase().includes(query.toLowerCase())).map(i => ({ ...i, source: 'fallback' }));
+    const combined = [...localMatches, ...list];
+    return combined.map(i => registerItem(mediaToUnified(i)));
   }
 
   async function fetchTmdbDetails(unified) {
@@ -521,14 +545,12 @@
   }
 
   async function fetchTvSeasonEpisodes(tvId, seasonNumber) {
+    if (!isTmdbConfigured()) return [{ episode_number: 1, name: 'الحلقة الأولى التجريبية' }];
     const data = await tmdbFetch(`tv/${tvId}/season/${seasonNumber}`);
     if (!data || !data.episodes) return [];
     return data.episodes;
   }
 
-  /* =========================================================================
-     بناء البطاقات
-     ========================================================================= */
   function createCardHTML(item) {
     return `
       <div data-uid="${item.uid}" class="media-card bg-brandSec rounded-xl overflow-hidden border border-brandBorder hover:border-brandGold/50 transition-all duration-300 group cursor-pointer shadow-lg hover:-translate-y-1">
@@ -559,17 +581,13 @@
   function renderHomeSections() {
     const iraqiContainer = document.getElementById('iraqiContainer');
     iraqiContainer.innerHTML = '';
-    mediaDatabase.forEach(item => registerItem(localToUnified(item)));
-    mediaDatabase.filter(i => i.category === 'أفلام عراقية' || i.category === 'دراما').forEach(item => {
-      iraqiContainer.innerHTML += createCardHTML(state.items['local-' + item.id]);
+    fallbackMediaDatabase.forEach(item => registerItem(mediaToUnified({ ...item, source: 'fallback' })));
+    
+    fallbackMediaDatabase.filter(i => i.category === 'أفلام عراقية' || i.category === 'دراما').forEach(item => {
+      iraqiContainer.innerHTML += createCardHTML(state.items['fallback-' + item.id]);
     });
     loadTrending();
   }
-
-  /* =========================================================================
-     نافذة التفاصيل وتكامل Vidsrc
-     ========================================================================= */
-  let currentItem = null;
 
   async function openDetailsModal(uid) {
     let item = state.items[uid];
@@ -604,14 +622,12 @@
     if (item.type === 'series') {
       seasonsSec.classList.remove('hidden');
       playBtn.innerHTML = `<i class="fa-solid fa-play"></i> تشغيل الموسم الأول`;
-      if (item.source === 'tmdb') {
-        playBtn.onclick = () => playVidsrc('tv', item.tmdbId, 1, 1, item.title);
-        if (!loading) populateTmdbSeasons(item);
-      }
+      playBtn.onclick = () => playVidsrc('tv', item.tvId || item.tmdbId || 1396, 1, 1, item.title);
+      populateTmdbSeasons(item);
     } else {
       seasonsSec.classList.add('hidden');
       playBtn.innerHTML = `<i class="fa-solid fa-play"></i> تشغيل الآن عبر Vidsrc`;
-      const targetId = item.source === 'tmdb' ? item.tmdbId : (item.tmdbId || 550);
+      const targetId = item.tmdbId || 550;
       playBtn.onclick = () => playVidsrc('movie', targetId, null, null, item.title);
     }
 
@@ -648,23 +664,19 @@
     document.getElementById('detailsModal').classList.remove('flex');
   }
 
-  function populateTmdbSeasons(item) {
+  async function populateTmdbSeasons(item) {
     const select = document.getElementById('seasonSelect');
     select.innerHTML = '';
-    const seasons = item.tvSeasons || [];
-    if (!seasons.length) {
-      select.innerHTML = `<option>لا توجد بيانات مواسم</option>`;
-      return;
-    }
+    const seasons = item.tvSeasons || [{ season_number: 1, name: 'الموسم 1' }];
     seasons.forEach(s => { select.innerHTML += `<option value="${s.season_number}">${s.name}</option>`; });
-    select.onchange = () => renderTmdbEpisodes(item, select.value);
-    renderTmdbEpisodes(item, seasons[0].season_number);
+    select.onchange = () => renderEpisodes(item, select.value);
+    renderEpisodes(item, seasons[0].season_number);
   }
 
-  async function renderTmdbEpisodes(item, seasonNumber) {
+  async function renderEpisodes(item, seasonNumber) {
     const container = document.getElementById('episodesContainer');
-    container.innerHTML = `<p class="text-xs text-brandMuted col-span-full flex items-center gap-2"><span class="spinner"></span> جاري تحميل الحلقات...</p>`;
-    const episodes = await fetchTvSeasonEpisodes(item.tvId, seasonNumber);
+    container.innerHTML = `<p class="text-xs text-brandMuted col-span-full">جاري تحميل الحلقات...</p>`;
+    const episodes = await fetchTvSeasonEpisodes(item.tvId || item.tmdbId, seasonNumber);
     container.innerHTML = '';
     if (!episodes.length) {
       container.innerHTML = `<p class="text-xs text-brandMuted col-span-full">لا تتوفر حلقات لهذا الموسم.</p>`;
@@ -678,31 +690,21 @@
           <div class="w-8 h-8 rounded-lg bg-brandGold/20 text-brandGold flex items-center justify-center font-bold text-xs">
             <i class="fa-solid fa-play"></i>
           </div>
-          <span class="text-xs font-bold text-brandText group-hover:text-brandGold transition-colors">الحلقة ${ep.episode_number}: ${ep.name}</span>
+          <span class="text-xs font-bold text-brandText group-hover:text-brandGold transition-colors">الحلقة ${ep.episode_number}: ${ep.name || 'حلقة ' + ep.episode_number}</span>
         </div>
         <span class="text-[10px] text-brandGold">مشاهدة فورية</span>
       `;
       btn.addEventListener('click', () => {
-        playVidsrc('tv', item.tvId, seasonNumber, ep.episode_number, `${item.title} - ${ep.name}`);
+        playVidsrc('tv', item.tvId || item.tmdbId, seasonNumber, ep.episode_number, `${item.title} - الحلقة ${ep.episode_number}`);
       });
       container.appendChild(btn);
     });
   }
 
-  /* =========================================================================
-     مشغل Vidsrc.to
-     ========================================================================= */
   function playVidsrc(type, id, season, episode, title) {
     closeDetailsModal();
     document.getElementById('playerMovieTitle').innerText = title;
-    
-    let embedUrl = '';
-    if (type === 'movie') {
-      embedUrl = `https://vidsrc.to/embed/movie/${id}`;
-    } else {
-      embedUrl = `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
-    }
-
+    let embedUrl = type === 'movie' ? `https://vidsrc.to/embed/movie/${id}` : `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
     document.getElementById('vidsrcIframe').src = embedUrl;
     document.getElementById('playerModal').classList.remove('hidden');
     document.getElementById('playerModal').classList.add('flex');
@@ -714,31 +716,21 @@
     document.getElementById('playerModal').classList.remove('flex');
   }
 
-  /* =========================================================================
-     التصفية والبحث
-     ========================================================================= */
   async function filterByCategory(categoryName) {
     showFilterView(`تصنيف: ${categoryName}`);
     const grid = document.getElementById('dynamicGrid');
     grid.innerHTML = `<p class="col-span-full flex items-center justify-center gap-2 text-brandMuted py-12"><span class="spinner"></span> جاري التحميل...</p>`;
 
-    let localResults = categoryName === 'أفلام' ? mediaDatabase.filter(i => i.type === 'movie') :
-                        categoryName === 'مسلسلات' ? mediaDatabase.filter(i => i.type === 'series') :
-                        mediaDatabase.filter(i => i.category === categoryName);
-    let localUnified = localResults.map(i => state.items['local-' + i.id]);
+    let results = await discoverByGenre(categoryName);
+    if (categoryName === 'أفلام') results = await discoverPopular('movie');
+    if (categoryName === 'مسلسلات') results = await discoverPopular('tv');
 
-    let tmdbUnified = [];
-    if (categoryName === 'أفلام') tmdbUnified = await discoverPopular('movie');
-    else if (categoryName === 'مسلسلات') tmdbUnified = await discoverPopular('tv');
-    else if (GENRE_MAP[categoryName]) tmdbUnified = await discoverByGenre(categoryName);
-
-    const all = [...localUnified, ...tmdbUnified];
     grid.innerHTML = '';
-    if (all.length === 0) {
+    if (results.length === 0) {
       grid.innerHTML = `<p class="text-brandMuted col-span-full text-center py-12">لا توجد عناوين متاحة حالياً تحت هذا التصنيف.</p>`;
       return;
     }
-    all.forEach(item => grid.innerHTML += createCardHTML(item));
+    results.forEach(item => grid.innerHTML += createCardHTML(item));
   }
 
   function filterWatchlist() {
@@ -772,32 +764,24 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  let searchDebounce = null;
   async function handleSearch(query) {
     if (!query.trim()) { resetFilter(); return; }
     showFilterView(`نتائج البحث عن: "${query}"`);
     const grid = document.getElementById('dynamicGrid');
     const spinner = document.getElementById('searchSpinner');
 
-    const localMatches = mediaDatabase.filter(i =>
-      i.title.toLowerCase().includes(query.toLowerCase()) ||
-      i.category.toLowerCase().includes(query.toLowerCase())
-    ).map(i => state.items['local-' + i.id]);
-
-    grid.innerHTML = '';
-    localMatches.forEach(item => grid.innerHTML += createCardHTML(item));
-
-    clearTimeout(searchDebounce);
     spinner.classList.remove('hidden');
+    clearTimeout(searchDebounce);
     searchDebounce = setTimeout(async () => {
-      const tmdbMatches = await tmdbSearch(query);
+      const matches = await tmdbSearch(query);
       spinner.classList.add('hidden');
-      const all = [...localMatches, ...tmdbMatches];
-      if (all.length === 0) {
+      grid.innerHTML = '';
+      if (matches.length === 0) {
         grid.innerHTML = `<p class="text-brandMuted col-span-full text-center py-12">عذراً، لم نجد أي نتائج تطابق بحثك.</p>`;
         return;
       }
-      grid.innerHTML = '';
-      all.forEach(item => grid.innerHTML += createCardHTML(item));
+      matches.forEach(item => grid.innerHTML += createCardHTML(item));
     }, 400);
   }
 
@@ -812,20 +796,14 @@
     saveWatchlist();
   }
 
-  /* =========================================================================
-     تسجيل الدخول Google
-     ========================================================================= */
   function base64UrlDecode(str) {
     str = str.replace(/-/g, '+').replace(/_/g, '/');
     while (str.length % 4) str += '=';
-    return decodeURIComponent(atob(str).split('').map(c =>
-      '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-    ).join(''));
+    return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
   }
 
   function decodeJwt(token) {
-    const payload = token.split('.')[1];
-    return JSON.parse(base64UrlDecode(payload));
+    return JSON.parse(base64UrlDecode(token.split('.')[1]));
   }
 
   function handleGoogleCredential(response) {
@@ -835,26 +813,17 @@
       localStorage.setItem('shoof_user', JSON.stringify(state.user));
       renderAccountArea();
       closeLoginModal();
-    } catch (err) {
-      console.error('تعذّر قراءة بيانات حساب Google:', err);
-    }
+    } catch (err) {}
   }
 
   function initGoogleSignIn() {
-    const warning = document.getElementById('googleConfigWarning');
-    if (!isGoogleConfigured()) {
-      warning.classList.remove('hidden');
-      warning.innerHTML = `قم بتعيين معرف العميل (Google Client ID) في كود التكوين لتفعيل تسجيل الدخول.`;
-      return;
-    }
     if (!window.google || !google.accounts || !google.accounts.id) {
       setTimeout(initGoogleSignIn, 300);
       return;
     }
     google.accounts.id.initialize({
       client_id: CONFIG.GOOGLE_CLIENT_ID,
-      callback: handleGoogleCredential,
-      auto_select: false
+      callback: handleGoogleCredential
     });
     google.accounts.id.renderButton(document.getElementById('googleBtnWrap'), {
       theme: 'filled_black', shape: 'pill', text: 'continue_with', locale: 'ar'
@@ -874,7 +843,6 @@
   function logout() {
     state.user = null;
     localStorage.removeItem('shoof_user');
-    if (window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect();
     renderAccountArea();
   }
 
@@ -890,7 +858,6 @@
           <div id="userMenuDropdown" class="hidden absolute left-0 mt-2 w-44 bg-brandSec border border-brandBorder rounded-xl shadow-xl overflow-hidden fade-in">
             <div class="px-4 py-3 border-b border-brandBorder">
               <p class="text-xs font-bold text-brandText truncate">${state.user.name}</p>
-              <p class="text-[10px] text-brandMuted truncate">${state.user.email}</p>
             </div>
             <button id="logoutBtn" class="w-full text-right px-4 py-2.5 text-xs text-brandMuted hover:text-brandGold hover:bg-brandCard transition-colors">
               <i class="fa-solid fa-arrow-right-from-bracket ml-1"></i> تسجيل الخروج
@@ -910,9 +877,6 @@
     }
   }
 
-  /* =========================================================================
-     ربط الأحداث العامة
-     ========================================================================= */
   document.addEventListener('DOMContentLoaded', () => {
     renderHomeSections();
     renderAccountArea();
@@ -925,22 +889,11 @@
     document.getElementById('navWatchlist').addEventListener('click', (e) => { e.preventDefault(); filterWatchlist(); });
     document.getElementById('resetFilterBtn').addEventListener('click', resetFilter);
 
-    document.getElementById('heroDetailsBtn').addEventListener('click', () => openDetailsModal('local-1'));
-    document.getElementById('heroWatchlistBtn').addEventListener('click', () => {
-      toggleWatchlist('local-1');
-      const inList = state.watchlist.includes('local-1');
-      document.getElementById('heroWatchlistBtn').innerHTML = inList
-        ? `<i class="fa-solid fa-check"></i> في قائمتي` : `<i class="fa-solid fa-plus"></i> أضف إلى قائمتي`;
-    });
-
+    document.getElementById('heroDetailsBtn').addEventListener('click', () => openDetailsModal('fallback-1'));
     document.getElementById('closeDetailsBtn').addEventListener('click', closeDetailsModal);
     document.getElementById('closePlayerBtn').addEventListener('click', closePlayer);
     document.getElementById('closeLoginBtn').addEventListener('click', closeLoginModal);
     document.getElementById('guestLoginBtn').addEventListener('click', closeLoginModal);
-
-    document.getElementById('notifBtn').addEventListener('click', () => {
-      document.getElementById('notifBadge').classList.add('hidden');
-    });
 
     document.getElementById('searchBtn').addEventListener('click', () => {
       const bar = document.getElementById('searchBar');
@@ -951,21 +904,6 @@
       document.getElementById('searchBar').classList.add('hidden');
       document.getElementById('searchInput').value = '';
       resetFilter();
-    });
-
-    document.addEventListener('click', (e) => {
-      const dropdown = document.getElementById('userMenuDropdown');
-      if (dropdown && !dropdown.classList.contains('hidden') && !e.target.closest('#accountArea')) {
-        dropdown.classList.add('hidden');
-      }
-    });
-    [document.getElementById('detailsModal'), document.getElementById('playerModal'), document.getElementById('loginModal')].forEach(modal => {
-      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'), modal.classList.remove('flex'); });
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeDetailsModal(); closePlayer(); closeLoginModal();
-      }
     });
   });
   </script>
