@@ -4,20 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>شوف | منصة البث السينمائية العربية</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
+
   <!-- Google Fonts: Cairo -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-  
+
   <!-- Plyr.js CSS -->
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+  <!-- Google Identity Services (تسجيل الدخول بحساب Google) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <script>
     tailwind.config = {
@@ -58,6 +61,14 @@
       --plyr-color-main: #E7B86A;
       --plyr-video-control-color: #F4F1E9;
     }
+    .spinner {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid rgba(231,184,106,0.25); border-top-color: #E7B86A;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fade-in { animation: fadeIn .25s ease; }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform:translateY(0);} }
   </style>
 </head>
 <body class="selection:bg-brandGold selection:text-brandBg pb-16 md:pb-0">
@@ -65,10 +76,10 @@
   <!-- ================= NAVBAR ================= -->
   <header class="fixed top-0 left-0 right-0 z-50 bg-brandBg/90 backdrop-blur-md border-b border-brandBorder/50 transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-      
+
       <!-- Logo & Navigation -->
       <div class="flex items-center gap-8">
-        <a href="#" onclick="resetFilter()" class="flex items-center gap-2.5 group">
+        <a href="#" id="logoLink" class="flex items-center gap-2.5 group">
           <div class="w-9 h-9 rounded-xl bg-brandGold/10 border border-brandGold/30 flex items-center justify-center text-brandGold group-hover:bg-brandGold group-hover:text-brandBg transition-all shadow-md">
             <i class="fa-solid fa-play text-sm"></i>
           </div>
@@ -76,12 +87,12 @@
         </a>
 
         <nav class="hidden md:flex items-center gap-6 text-sm font-semibold">
-          <a href="#" onclick="resetFilter()" class="text-brandGold border-b-2 border-brandGold pb-1">الرئيسية</a>
-          <a href="#catalog" onclick="filterByCategory('أفلام')" class="text-brandMuted hover:text-brandText transition-colors">أفلام</a>
-          <a href="#catalog" onclick="filterByCategory('مسلسلات')" class="text-brandMuted hover:text-brandText transition-colors">مسلسلات</a>
+          <a href="#" id="navHome" class="text-brandGold border-b-2 border-brandGold pb-1">الرئيسية</a>
+          <a href="#catalog" data-cat="أفلام" class="cat-link text-brandMuted hover:text-brandText transition-colors">أفلام</a>
+          <a href="#catalog" data-cat="مسلسلات" class="cat-link text-brandMuted hover:text-brandText transition-colors">مسلسلات</a>
           <a href="#categories" class="text-brandMuted hover:text-brandText transition-colors">تصنيفات</a>
-          <a href="#catalog" onclick="filterByCategory('أفلام عراقية')" class="text-brandMuted hover:text-brandText transition-colors">أفلام عراقية</a>
-          <a href="#catalog" onclick="filterWatchlist()" class="text-brandMuted hover:text-brandText transition-colors">قائمتي</a>
+          <a href="#catalog" data-cat="أفلام عراقية" class="cat-link text-brandMuted hover:text-brandText transition-colors">أفلام عراقية</a>
+          <a href="#catalog" id="navWatchlist" class="text-brandMuted hover:text-brandText transition-colors">قائمتي</a>
         </nav>
       </div>
 
@@ -96,10 +107,8 @@
           <span id="notifBadge" class="hidden absolute top-2 left-2 w-2 h-2 rounded-full bg-brandGold shadow-[0_0_8px_#E7B86A]"></span>
         </button>
 
-        <button class="flex items-center gap-2 bg-brandSec hover:bg-brandCard px-3 py-1.5 rounded-full border border-brandBorder transition-all">
-          <div class="w-7 h-7 rounded-full bg-brandGold/20 text-brandGold flex items-center justify-center font-bold text-xs">ع</div>
-          <span class="hidden sm:inline text-xs font-semibold">عبادي</span>
-        </button>
+        <!-- منطقة الحساب: تتبدل بين زر تسجيل الدخول وصورة المستخدم -->
+        <div id="accountArea"></div>
       </div>
     </div>
   </header>
@@ -109,6 +118,7 @@
     <div class="max-w-3xl mx-auto flex items-center gap-3 bg-brandBg px-4 py-2.5 rounded-xl border border-brandBorder">
       <i class="fa-solid fa-magnifying-glass text-brandMuted"></i>
       <input type="text" id="searchInput" placeholder="ابحث عن فيلم، مسلسل، أو تصنيف..." class="bg-transparent text-brandText w-full focus:outline-none text-sm placeholder:text-brandMuted/60" oninput="handleSearch(this.value)">
+      <span id="searchSpinner" class="spinner hidden"></span>
       <button id="closeSearch" class="text-brandMuted hover:text-brandText"><i class="fa-solid fa-xmark"></i></button>
     </div>
   </div>
@@ -116,7 +126,7 @@
   <!-- ================= HERO SECTION ================= -->
   <section class="relative min-h-[85vh] flex items-center pt-20 overflow-hidden">
     <div class="absolute inset-0 z-0">
-      <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1920&auto=format&fit=crop" class="w-full h-full object-cover object-center scale-105">
+      <img id="heroImg" src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1920&auto=format&fit=crop" class="w-full h-full object-cover object-center scale-105">
       <div class="absolute inset-0 hero-gradient"></div>
     </div>
 
@@ -124,21 +134,21 @@
       <div class="max-w-2xl space-y-4">
         <div class="flex items-center gap-3 text-xs font-bold">
           <span class="bg-brandGold text-brandBg px-2.5 py-1 rounded-md uppercase tracking-wider">حصرياً على شوف</span>
-          <span class="bg-brandCard text-brandMuted border border-brandBorder px-2.5 py-1 rounded-md"><i class="fa-solid fa-star text-brandGold ml-1"></i> IMDb 9.2</span>
-          <span class="text-brandMuted">2026 • دراما / ملحمة</span>
+          <span class="bg-brandCard text-brandMuted border border-brandBorder px-2.5 py-1 rounded-md"><i class="fa-solid fa-star text-brandGold ml-1"></i> IMDb <span id="heroRating">9.2</span></span>
+          <span id="heroMeta" class="text-brandMuted">2026 • دراما / ملحمة</span>
         </div>
 
-        <h1 class="text-4xl sm:text-6xl font-extrabold text-brandText tracking-tight">صراع العروش العراقية</h1>
-        <p class="text-brandGold font-semibold text-lg sm:text-xl">ملحمة التاريخ والتحالفات الكبرى</p>
-        <p class="text-brandMuted text-sm sm:text-base leading-relaxed line-clamp-3">
+        <h1 id="heroTitle" class="text-4xl sm:text-6xl font-extrabold text-brandText tracking-tight">صراع العروش العراقية</h1>
+        <p id="heroTagline" class="text-brandGold font-semibold text-lg sm:text-xl">ملحمة التاريخ والتحالفات الكبرى</p>
+        <p id="heroDesc" class="text-brandMuted text-sm sm:text-base leading-relaxed line-clamp-3">
           ملحمة درامية تاريخية ضخمة تتناول الصراعات والتحالفات عبر العصور في بلاد الرافدين، حيث تروى قصص الشرف والبطولة.
         </p>
 
         <div class="flex items-center gap-4 pt-4">
-          <button onclick="openDetailsModal(3)" class="bg-brandGold hover:bg-brandGoldHover text-brandBg font-bold px-7 py-3 rounded-xl flex items-center gap-2 transition-all transform hover:scale-105 shadow-lg shadow-brandGold/10">
+          <button id="heroDetailsBtn" class="bg-brandGold hover:bg-brandGoldHover text-brandBg font-bold px-7 py-3 rounded-xl flex items-center gap-2 transition-all transform hover:scale-105 shadow-lg shadow-brandGold/10">
             <i class="fa-solid fa-play"></i> تفاصيل ومشاهدة
           </button>
-          <button onclick="toggleWatchlist('صراع العروش العراقية')" class="bg-brandCard/80 hover:bg-brandCard text-brandText border border-brandBorder font-semibold px-6 py-3 rounded-xl flex items-center gap-2 transition-all backdrop-blur-sm">
+          <button id="heroWatchlistBtn" class="bg-brandCard/80 hover:bg-brandCard text-brandText border border-brandBorder font-semibold px-6 py-3 rounded-xl flex items-center gap-2 transition-all backdrop-blur-sm">
             <i class="fa-solid fa-plus"></i> أضف إلى قائمتي
           </button>
         </div>
@@ -151,7 +161,7 @@
 
     <div id="filterHeader" class="hidden items-center justify-between border-b border-brandBorder pb-4">
       <h2 id="filterTitle" class="text-2xl font-bold text-brandGold flex items-center gap-2">نتائج التصنيف</h2>
-      <button onclick="resetFilter()" class="text-xs bg-brandSec border border-brandBorder px-3 py-1.5 rounded-lg text-brandMuted hover:text-brandText">إلغاء التصفية والعودة للرئيسية</button>
+      <button id="resetFilterBtn" class="text-xs bg-brandSec border border-brandBorder px-3 py-1.5 rounded-lg text-brandMuted hover:text-brandText">إلغاء التصفية والعودة للرئيسية</button>
     </div>
 
     <!-- Default Homepage Sections -->
@@ -159,9 +169,9 @@
       <section>
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
-            <span class="w-2 h-6 bg-brandGold rounded-full"></span> أحدث الإضافات والأعلى تقييماً
+            <span class="w-2 h-6 bg-brandGold rounded-full"></span> الأكثر رواجاً حول العالم (TMDb)
           </h2>
-          <button onclick="filterByCategory('أفلام')" class="text-xs text-brandGold hover:underline font-semibold">عرض الكل</button>
+          <span id="trendingSpinner" class="spinner"></span>
         </div>
         <div id="latestContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
       </section>
@@ -171,7 +181,7 @@
           <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
             <span class="w-2 h-6 bg-brandGold rounded-full"></span> أفلام عراقية مميزة
           </h2>
-          <button onclick="filterByCategory('أفلام عراقية')" class="text-xs text-brandGold hover:underline font-semibold">عرض الكل</button>
+          <button data-cat="أفلام عراقية" class="cat-link text-xs text-brandGold hover:underline font-semibold">عرض الكل</button>
         </div>
         <div id="iraqiContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5"></div>
       </section>
@@ -183,35 +193,35 @@
           </h2>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-          <button onclick="filterByCategory('مسلسلات')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+          <button data-cat="مسلسلات" class="cat-link bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
             <i class="fa-solid fa-tv text-xl text-brandGold group-hover:text-brandBg"></i>
             <span class="text-xs font-bold">مسلسلات</span>
           </button>
-          <button onclick="filterByCategory('أفلام عراقية')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+          <button data-cat="أفلام عراقية" class="cat-link bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
             <i class="fa-solid fa-film text-xl text-brandGold group-hover:text-brandBg"></i>
             <span class="text-xs font-bold">أفلام عراقية</span>
           </button>
-          <button onclick="filterByCategory('وثائقي')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+          <button data-cat="وثائقي" class="cat-link bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
             <i class="fa-solid fa-camera-retro text-xl text-brandGold group-hover:text-brandBg"></i>
             <span class="text-xs font-bold">وثائقي</span>
           </button>
-          <button onclick="filterByCategory('إثارة')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+          <button data-cat="إثارة" class="cat-link bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
             <i class="fa-solid fa-user-ninja text-xl text-brandGold group-hover:text-brandBg"></i>
             <span class="text-xs font-bold">إثارة</span>
           </button>
-          <button onclick="filterByCategory('رعب')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+          <button data-cat="رعب" class="cat-link bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
             <i class="fa-solid fa-ghost text-xl text-brandGold group-hover:text-brandBg"></i>
             <span class="text-xs font-bold">رعب</span>
           </button>
-          <button onclick="filterByCategory('كوميديا')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+          <button data-cat="كوميديا" class="cat-link bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
             <i class="fa-solid fa-face-laugh-beam text-xl text-brandGold group-hover:text-brandBg"></i>
             <span class="text-xs font-bold">كوميديا</span>
           </button>
-          <button onclick="filterByCategory('دراما')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+          <button data-cat="دراما" class="cat-link bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
             <i class="fa-solid fa-masks-theater text-xl text-brandGold group-hover:text-brandBg"></i>
             <span class="text-xs font-bold">دراما</span>
           </button>
-          <button onclick="filterByCategory('أكشن')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+          <button data-cat="أكشن" class="cat-link bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
             <i class="fa-solid fa-explosion text-xl text-brandGold group-hover:text-brandBg"></i>
             <span class="text-xs font-bold">أكشن</span>
           </button>
@@ -228,7 +238,7 @@
   <!-- ================= DETAILS MODAL ================= -->
   <div id="detailsModal" class="fixed inset-0 z-50 bg-black/90 hidden items-center justify-center p-3 sm:p-6 backdrop-blur-md overflow-y-auto">
     <div class="relative w-full max-w-4xl bg-brandSec rounded-2xl overflow-hidden border border-brandBorder shadow-2xl my-auto">
-      <button onclick="closeDetailsModal()" class="absolute top-4 left-4 z-30 w-10 h-10 rounded-full bg-brandBg/80 hover:bg-brandGold hover:text-brandBg flex items-center justify-center text-brandText transition-all">
+      <button id="closeDetailsBtn" class="absolute top-4 left-4 z-30 w-10 h-10 rounded-full bg-brandBg/80 hover:bg-brandGold hover:text-brandBg flex items-center justify-center text-brandText transition-all">
         <i class="fa-solid fa-xmark text-lg"></i>
       </button>
 
@@ -249,7 +259,7 @@
             </div>
             <h2 id="modalTitle" class="text-3xl sm:text-4xl font-extrabold text-brandText">عنوان الفيلم</h2>
           </div>
-          
+
           <div class="flex items-center gap-3">
             <button id="modalPlayBtn" class="bg-brandGold hover:bg-brandGoldHover text-brandBg font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg">
               <i class="fa-solid fa-play"></i> تشغيل الآن
@@ -273,10 +283,7 @@
             <h3 class="text-lg font-bold text-brandText flex items-center gap-2">
               <i class="fa-solid fa-list text-brandGold"></i> الحلقات والمواسم
             </h3>
-            <select id="seasonSelect" onchange="changeSeason(this.value)" class="bg-brandBg border border-brandBorder text-brandText text-sm px-3 py-1.5 rounded-lg focus:outline-none focus:border-brandGold">
-              <option value="الموسم الأول">الموسم الأول</option>
-              <option value="الموسم الثاني">الموسم الثاني</option>
-            </select>
+            <select id="seasonSelect" class="bg-brandBg border border-brandBorder text-brandText text-sm px-3 py-1.5 rounded-lg focus:outline-none focus:border-brandGold"></select>
           </div>
           <div id="episodesContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-1"></div>
         </div>
@@ -297,15 +304,35 @@
         <h3 id="playerMovieTitle" class="font-bold text-brandGold text-base sm:text-lg flex items-center gap-2">
           <i class="fa-solid fa-circle-play"></i> جاري العرض
         </h3>
-        <button onclick="closePlayer()" class="w-8 h-8 rounded-full bg-brandBg hover:bg-brandGold hover:text-brandBg flex items-center justify-center text-brandMuted transition-all">
+        <button id="closePlayerBtn" class="w-8 h-8 rounded-full bg-brandBg hover:bg-brandGold hover:text-brandBg flex items-center justify-center text-brandMuted transition-all">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       <div class="aspect-video w-full bg-black">
-        <video id="plyrPlayer" controls playsinline>
-          <source id="plyrSource" src="" type="video/mp4" />
-        </video>
+        <div id="plyrPlayer" data-plyr-provider="youtube" data-plyr-embed-id=""></div>
       </div>
+      <p id="playerNote" class="text-[11px] text-brandMuted p-3 bg-brandCard/60 hidden"></p>
+    </div>
+  </div>
+
+  <!-- ================= LOGIN MODAL (Google) ================= -->
+  <div id="loginModal" class="fixed inset-0 z-[60] bg-black/90 hidden items-center justify-center p-4 backdrop-blur-md">
+    <div class="relative w-full max-w-sm bg-brandSec rounded-2xl border border-brandBorder shadow-2xl p-8 text-center space-y-5">
+      <button id="closeLoginBtn" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-brandBg/80 hover:bg-brandGold hover:text-brandBg flex items-center justify-center text-brandText transition-all">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-brandGold/10 border border-brandGold/30 flex items-center justify-center text-brandGold">
+        <i class="fa-solid fa-play text-xl"></i>
+      </div>
+      <h3 class="text-xl font-extrabold text-brandText">تسجيل الدخول إلى شوف</h3>
+      <p class="text-xs text-brandMuted leading-relaxed">سجّل دخولك بحساب Google لحفظ قائمتك ومتابعة المشاهدة من أي جهاز.</p>
+
+      <div id="googleBtnWrap" class="flex justify-center min-h-[42px] items-center"></div>
+      <p id="googleConfigWarning" class="hidden text-[11px] text-brandGold/90 bg-brandGold/10 border border-brandGold/30 rounded-lg p-3 text-right leading-relaxed"></p>
+
+      <button id="guestLoginBtn" class="w-full text-xs text-brandMuted hover:text-brandText underline underline-offset-4">
+        المتابعة كضيف بدون تسجيل
+      </button>
     </div>
   </div>
 
@@ -315,6 +342,7 @@
       <div>
         <p class="text-brandText font-bold text-lg mb-1">شوف | SHOOAF</p>
         <p class="text-xs text-brandMuted">منصة البث السينمائية العربية الأولى للإنتاجات العراقية والعالمية.</p>
+        <p class="text-[10px] text-brandMuted/60 mt-2">تُستخدم بيانات الأفلام والمسلسلات من TMDb، وهذا المنتج غير معتمد أو مصدّق من قِبل TMDb.</p>
       </div>
       <div class="flex items-center gap-6 text-xs text-brandMuted">
         <a href="#" class="hover:text-brandGold transition-colors">سياسة الخصوصية</a>
@@ -328,370 +356,783 @@
   <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 
   <script>
-    const player = new Plyr('#plyrPlayer', {
-      controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'fullscreen'],
+  /* =========================================================================
+     إعدادات عامة — ضع مفاتيحك هنا
+     ========================================================================= */
+  const CONFIG = {
+    // مفتاح TMDb API (v3) — أنشئه مجاناً من https://www.themoviedb.org/settings/api
+    TMDB_API_KEY: 'YOUR_TMDB_API_KEY',
+    TMDB_LANG: 'ar',
+    // Client ID الخاص بمشروعك على Google Cloud Console (OAuth 2.0)
+    // يجب إضافة نطاق موقعك ضمن "Authorized JavaScript origins"
+    GOOGLE_CLIENT_ID: '472124197553-ljunpv7h0rleid5souno4tg0rtcbtj3m.apps.googleusercontent.com'
+  };
+
+  const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
+  const TMDB_IMG_BIG = 'https://image.tmdb.org/t/p/original';
+  const isTmdbConfigured = () => CONFIG.TMDB_API_KEY && CONFIG.TMDB_API_KEY !== 'YOUR_TMDB_API_KEY';
+  const isGoogleConfigured = () => CONFIG.GOOGLE_CLIENT_ID && CONFIG.GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
+  const GENRE_MAP = {
+    'أكشن': 28, 'كوميديا': 35, 'دراما': 18, 'رعب': 27, 'إثارة': 53, 'وثائقي': 99
+  };
+
+  /* =========================================================================
+     Plyr player (يبدأ بدون مصدر، يتم تعبئته عند التشغيل)
+     ========================================================================= */
+  let player = null;
+  function initPlyr() {
+    player = new Plyr('#plyrPlayer', {
       i18n: { play: 'تشغيل', pause: 'إيقاف مؤقت', mute: 'كتم الصوت', fullscreen: 'ملء الشاشة' }
     });
+  }
 
-    const mediaDatabase = [
-      { 
-        id: 1, title: 'السطح', type: 'movie', category: 'دراما', year: '2026', rating: '8.9', 
-        poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop', 
-        backdrop: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1200&auto=format&fit=crop',
-        description: 'في قلب بغداد، تتقاطع مصائر مجموعة من الأشخاص في يوم واحد، لنكتشف أسرار المدينة وتاريخها المليء بالأمل والتحديات.',
-        cast: ['أحمد السعدي', 'فاطمة العلي', 'محمد البصري'],
-        video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' 
-      },
-      { 
-        id: 2, title: 'رحلة بغداد', type: 'movie', category: 'أفلام عراقية', year: '2025', rating: '8.7', 
-        poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop', 
-        backdrop: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1200&auto=format&fit=crop',
-        description: 'توثيق بصري ودرامي فريد لأزقة بغداد العتيقة وحكايات أهلها الطيبين.',
-        cast: ['سناء عبدالرحمن', 'مهدي الهلالي'],
-        video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' 
-      },
-      { 
-        id: 3, title: 'صراع العروش العراقية', type: 'series', category: 'مسلسلات', year: '2026', rating: '9.2', 
-        poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&auto=format&fit=crop', 
-        backdrop: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=1200&auto=format&fit=crop',
-        description: 'ملحمة درامية تاريخية ضخمة تتناول الصراعات والتحالفات عبر العصور في بلاد الرافدين.',
-        cast: ['علي الشمري', 'زينب الخفاجي', 'حيدر الجيزاني'],
-        seasons: {
-          'الموسم الأول': [
-            { ep: 1, title: 'الحلقة 1: البداية والعهد', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
-            { ep: 2, title: 'الحلقة 2: العاصفة', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' }
-          ],
-          'الموسم الثاني': [
-            { ep: 1, title: 'الحلقة 1: عودة الخصوم', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' }
-          ]
-        }
-      },
-      { 
-        id: 4, title: 'وادي الأمل', type: 'series', category: 'مسلسلات', year: '2025', rating: '9.0', 
-        poster: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?q=80&w=600&auto=format&fit=crop', 
-        backdrop: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?q=80&w=1200&auto=format&fit=crop',
-        description: 'قصص إنسانية مؤثرة حول المثابرة وتحقيق الأحلام رغم الصعاب في القرى والمحافظات.',
-        cast: ['مريم حسين', 'جواد الشكرجي'],
-        seasons: {
-          'الموسم الأول': [
-            { ep: 1, title: 'الحلقة 1: نقطة الصفر', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
-            { ep: 2, title: 'الحلقة 2: الإشراقة', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
-          ]
-        }
-      },
-      { 
-        id: 5, title: 'كابتن عراقي', type: 'movie', category: 'أفلام عراقية', year: '2023', rating: '8.1', 
-        poster: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&auto=format&fit=crop', 
-        backdrop: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1200&auto=format&fit=crop',
-        description: 'قصة ملهمة لشاب كرّس حياته لتدريب الناشئة على كرة القدم في الأحياء الشعبية.',
-        cast: ['سامي قفطان', 'باسم قهار'],
-        video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' 
-      },
-      { 
-        id: 6, title: 'أسرار دجلة', type: 'documentary', category: 'وثائقي', year: '2024', rating: '8.8', 
-        poster: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop', 
-        backdrop: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop',
-        description: 'رحلة استكشافية على ضفاف نهر دجلة التاريخي وأسراره البيئية والحضارية.',
-        cast: ['فريق البث الوثائقي'],
-        video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' 
-      },
-      { 
-        id: 7, title: 'ليلة الرعب', type: 'movie', category: 'رعب', year: '2025', rating: '7.9', 
-        poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop', 
-        backdrop: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1200&auto=format&fit=crop',
-        description: 'أحداث مرعبة وغامضة تحدث داخل بيت أثري قديم.',
-        cast: ['محمود أبو العباس', 'زهرة بدن'],
-        video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' 
-      },
-      { 
-        id: 8, title: 'الظل الغامض', type: 'movie', category: 'إثارة', year: '2026', rating: '8.9', 
-        poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop', 
-        backdrop: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop',
-        description: 'محقق يطارد مجلماً ذكياً عبر شبكة الإنترنت في سباق مع الزمن.',
-        cast: ['عدنان شلاش', 'بتول كاظم'],
-        video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' 
-      },
-      { 
-        id: 9, title: 'آخر أيام الصيف', type: 'movie', category: 'أفلام عراقية', year: '2025', rating: '8.6', 
-        poster: 'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=600&auto=format&fit=crop', 
-        backdrop: 'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=1200&auto=format&fit=crop',
-        description: 'ذكريات الطفولة والصداقة في الأيام الأخيرة قبل السفر.',
-        cast: ['هناء محمد', 'قاسم الملاك'],
-        video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' 
-      },
-      { 
-        id: 10, title: 'ضحكات بغدادية', type: 'movie', category: 'كوميديا', year: '2026', rating: '8.3', 
-        poster: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop', 
-        backdrop: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop',
-        description: 'كوميديا اجتماعية خفيفة تعكس روح الفكاهة والبهجة في الشارع العراقي.',
-        cast: ['إحسان دعدوش', 'علي حسن'],
-        video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' 
+  /* =========================================================================
+     قاعدة بيانات محلية (تُستخدم كمحتوى عراقي مميز ودعم احتياطي بدون إنترنت)
+     ========================================================================= */
+  const mediaDatabase = [
+    {
+      id: 1, title: 'السطح', type: 'movie', category: 'دراما', year: '2026', rating: '8.9',
+      poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop',
+      backdrop: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1200&auto=format&fit=crop',
+      description: 'في قلب بغداد، تتقاطع مصائر مجموعة من الأشخاص في يوم واحد، لنكتشف أسرار المدينة وتاريخها المليء بالأمل والتحديات.',
+      cast: ['أحمد السعدي', 'فاطمة العلي', 'محمد البصري'],
+      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
+    },
+    {
+      id: 2, title: 'رحلة بغداد', type: 'movie', category: 'أفلام عراقية', year: '2025', rating: '8.7',
+      poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop',
+      backdrop: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1200&auto=format&fit=crop',
+      description: 'توثيق بصري ودرامي فريد لأزقة بغداد العتيقة وحكايات أهلها الطيبين.',
+      cast: ['سناء عبدالرحمن', 'مهدي الهلالي'],
+      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
+    },
+    {
+      id: 3, title: 'صراع العروش العراقية', type: 'series', category: 'مسلسلات', year: '2026', rating: '9.2',
+      poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&auto=format&fit=crop',
+      backdrop: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=1200&auto=format&fit=crop',
+      description: 'ملحمة درامية تاريخية ضخمة تتناول الصراعات والتحالفات عبر العصور في بلاد الرافدين.',
+      cast: ['علي الشمري', 'زينب الخفاجي', 'حيدر الجيزاني'],
+      seasons: {
+        'الموسم الأول': [
+          { ep: 1, title: 'الحلقة 1: البداية والعهد', videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+          { ep: 2, title: 'الحلقة 2: العاصفة', videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' }
+        ],
+        'الموسم الثاني': [
+          { ep: 1, title: 'الحلقة 1: عودة الخصوم', videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' }
+        ]
       }
-    ];
-
-    let watchlist = [];
-    let currentSelectedItem = null;
-
-    function renderHomeSections() {
-      const latestContainer = document.getElementById('latestContainer');
-      const iraqiContainer = document.getElementById('iraqiContainer');
-      
-      latestContainer.innerHTML = '';
-      iraqiContainer.innerHTML = '';
-
-      mediaDatabase.slice(0, 6).forEach(item => {
-        latestContainer.innerHTML += createCardHTML(item);
-      });
-
-      mediaDatabase.filter(i => i.category === 'أفلام عراقية' || i.type === 'movie').slice(0, 5).forEach(item => {
-        iraqiContainer.innerHTML += createCardHTML(item);
-      });
+    },
+    {
+      id: 4, title: 'وادي الأمل', type: 'series', category: 'مسلسلات', year: '2025', rating: '9.0',
+      poster: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?q=80&w=600&auto=format&fit=crop',
+      backdrop: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?q=80&w=1200&auto=format&fit=crop',
+      description: 'قصص إنسانية مؤثرة حول المثابرة وتحقيق الأحلام رغم الصعاب في القرى والمحافظات.',
+      cast: ['مريم حسين', 'جواد الشكرجي'],
+      seasons: {
+        'الموسم الأول': [
+          { ep: 1, title: 'الحلقة 1: نقطة الصفر', videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
+          { ep: 2, title: 'الحلقة 2: الإشراقة', videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
+        ]
+      }
+    },
+    {
+      id: 5, title: 'كابتن عراقي', type: 'movie', category: 'أفلام عراقية', year: '2023', rating: '8.1',
+      poster: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&auto=format&fit=crop',
+      backdrop: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1200&auto=format&fit=crop',
+      description: 'قصة ملهمة لشاب كرّس حياته لتدريب الناشئة على كرة القدم في الأحياء الشعبية.',
+      cast: ['سامي قفطان', 'باسم قهار'],
+      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
+    },
+    {
+      id: 6, title: 'أسرار دجلة', type: 'movie', category: 'وثائقي', year: '2024', rating: '8.8',
+      poster: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop',
+      backdrop: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop',
+      description: 'رحلة استكشافية على ضفاف نهر دجلة التاريخي وأسراره البيئية والحضارية.',
+      cast: ['فريق البث الوثائقي'],
+      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+    },
+    {
+      id: 7, title: 'ليلة الرعب', type: 'movie', category: 'رعب', year: '2025', rating: '7.9',
+      poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop',
+      backdrop: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1200&auto=format&fit=crop',
+      description: 'أحداث مرعبة وغامضة تحدث داخل بيت أثري قديم.',
+      cast: ['محمود أبو العباس', 'زهرة بدن'],
+      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
+    },
+    {
+      id: 8, title: 'الظل الغامض', type: 'movie', category: 'إثارة', year: '2026', rating: '8.9',
+      poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop',
+      backdrop: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop',
+      description: 'محقق يطارد مجرماً ذكياً عبر شبكة الإنترنت في سباق مع الزمن.',
+      cast: ['عدنان شلاش', 'بتول كاظم'],
+      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
+    },
+    {
+      id: 9, title: 'آخر أيام الصيف', type: 'movie', category: 'أفلام عراقية', year: '2025', rating: '8.6',
+      poster: 'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=600&auto=format&fit=crop',
+      backdrop: 'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=1200&auto=format&fit=crop',
+      description: 'ذكريات الطفولة والصداقة في الأيام الأخيرة قبل السفر.',
+      cast: ['هناء محمد', 'قاسم الملاك'],
+      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+    },
+    {
+      id: 10, title: 'ضحكات بغدادية', type: 'movie', category: 'كوميديا', year: '2026', rating: '8.3',
+      poster: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop',
+      backdrop: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop',
+      description: 'كوميديا اجتماعية خفيفة تعكس روح الفكاهة والبهجة في الشارع العراقي.',
+      cast: ['إحسان دعدوش', 'علي حسن'],
+      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
     }
+  ];
 
-    function createCardHTML(item) {
-      return `
-        <div onclick="openDetailsModal(${item.id})" class="bg-brandSec rounded-xl overflow-hidden border border-brandBorder hover:border-brandGold/50 transition-all duration-300 group cursor-pointer shadow-lg hover:-translate-y-1">
-          <div class="relative aspect-[2/3] overflow-hidden">
-            <img src="${item.poster}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-            <span class="absolute top-2 right-2 bg-brandBg/90 text-brandGold text-[11px] font-bold px-2 py-0.5 rounded border border-brandBorder">
-              ⭐ ${item.rating}
-            </span>
-            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-              <div class="w-10 h-10 rounded-full bg-brandGold text-brandBg flex items-center justify-center font-bold shadow-xl">
-                <i class="fa-solid fa-play"></i>
-              </div>
+  /* =========================================================================
+     حالة التطبيق
+     ========================================================================= */
+  const state = {
+    items: {},           // uid -> item موحّد
+    watchlist: JSON.parse(localStorage.getItem('shoof_watchlist') || '[]'),
+    user: JSON.parse(localStorage.getItem('shoof_user') || 'null')
+  };
+
+  function saveWatchlist() { localStorage.setItem('shoof_watchlist', JSON.stringify(state.watchlist)); }
+
+  // تحويل عنصر محلي إلى الشكل الموحّد
+  function localToUnified(item) {
+    return {
+      uid: 'local-' + item.id,
+      source: 'local',
+      raw: item,
+      title: item.title,
+      type: item.type,
+      category: item.category,
+      year: item.year,
+      rating: item.rating,
+      poster: item.poster,
+      backdrop: item.backdrop,
+      description: item.description,
+      cast: item.cast
+    };
+  }
+
+  // تحويل نتيجة TMDb إلى الشكل الموحّد
+  function tmdbToUnified(raw, mediaType) {
+    const type = mediaType || raw.media_type || (raw.title ? 'movie' : 'tv');
+    const title = raw.title || raw.name || 'بدون عنوان';
+    const date = raw.release_date || raw.first_air_date || '';
+    return {
+      uid: 'tmdb-' + type + '-' + raw.id,
+      source: 'tmdb',
+      tmdbType: type,
+      tmdbId: raw.id,
+      title,
+      type: type === 'tv' ? 'series' : 'movie',
+      category: type === 'tv' ? 'مسلسلات' : 'أفلام',
+      year: date ? date.slice(0, 4) : '—',
+      rating: raw.vote_average ? raw.vote_average.toFixed(1) : '—',
+      poster: raw.poster_path ? TMDB_IMG + raw.poster_path : 'https://placehold.co/400x600/0E202D/E7B86A?text=شوف',
+      backdrop: raw.backdrop_path ? TMDB_IMG_BIG + raw.backdrop_path : (raw.poster_path ? TMDB_IMG_BIG + raw.poster_path : ''),
+      description: raw.overview || 'لا يوجد وصف متاح حالياً.',
+      cast: null // يُعبّأ لاحقاً عند فتح التفاصيل
+    };
+  }
+
+  function registerItem(unified) { state.items[unified.uid] = unified; return unified; }
+
+  /* =========================================================================
+     TMDb API
+     ========================================================================= */
+  async function tmdbFetch(path, params) {
+    if (!isTmdbConfigured()) return null;
+    const url = new URL('https://api.themoviedb.org/3/' + path);
+    url.searchParams.set('api_key', CONFIG.TMDB_API_KEY);
+    url.searchParams.set('language', CONFIG.TMDB_LANG);
+    Object.entries(params || {}).forEach(([k, v]) => url.searchParams.set(k, v));
+    try {
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error('TMDb error ' + res.status);
+      return await res.json();
+    } catch (err) {
+      console.warn('تعذّر الاتصال بـ TMDb:', err);
+      return null;
+    }
+  }
+
+  async function loadTrending() {
+    const spinner = document.getElementById('trendingSpinner');
+    const container = document.getElementById('latestContainer');
+    if (!isTmdbConfigured()) {
+      spinner.classList.add('hidden');
+      container.innerHTML = `<p class="col-span-full text-xs text-brandMuted bg-brandSec border border-brandBorder rounded-xl p-4">
+        لعرض المحتوى العالمي تلقائياً، أضف مفتاح TMDb API الخاص بك في متغيّر <code class="text-brandGold">CONFIG.TMDB_API_KEY</code> داخل الكود.
+      </p>`;
+      return;
+    }
+    const data = await tmdbFetch('trending/all/week');
+    spinner.classList.add('hidden');
+    container.innerHTML = '';
+    if (!data || !data.results) {
+      container.innerHTML = `<p class="col-span-full text-xs text-brandMuted">تعذّر تحميل المحتوى الرائج حالياً.</p>`;
+      return;
+    }
+    data.results.filter(r => r.media_type === 'movie' || r.media_type === 'tv').slice(0, 12).forEach(r => {
+      const unified = registerItem(tmdbToUnified(r, r.media_type));
+      container.innerHTML += createCardHTML(unified);
+    });
+  }
+
+  async function discoverByGenre(categoryName) {
+    const genreId = GENRE_MAP[categoryName];
+    if (!genreId || !isTmdbConfigured()) return [];
+    const data = await tmdbFetch('discover/movie', { with_genres: genreId, sort_by: 'popularity.desc' });
+    if (!data || !data.results) return [];
+    return data.results.slice(0, 10).map(r => registerItem(tmdbToUnified(r, 'movie')));
+  }
+
+  async function discoverPopular(mediaType) {
+    if (!isTmdbConfigured()) return [];
+    const data = await tmdbFetch(mediaType === 'tv' ? 'tv/popular' : 'movie/popular');
+    if (!data || !data.results) return [];
+    return data.results.slice(0, 12).map(r => registerItem(tmdbToUnified(r, mediaType)));
+  }
+
+  let searchDebounce = null;
+  async function tmdbSearch(query) {
+    if (!isTmdbConfigured()) return [];
+    const data = await tmdbFetch('search/multi', { query, include_adult: 'false' });
+    if (!data || !data.results) return [];
+    return data.results
+      .filter(r => r.media_type === 'movie' || r.media_type === 'tv')
+      .slice(0, 15)
+      .map(r => registerItem(tmdbToUnified(r, r.media_type)));
+  }
+
+  async function fetchTmdbDetails(unified) {
+    if (unified.source !== 'tmdb') return unified;
+    const path = (unified.tmdbType === 'tv' ? 'tv/' : 'movie/') + unified.tmdbId;
+    const data = await tmdbFetch(path, { append_to_response: 'credits,videos' });
+    if (!data) return unified;
+    unified.cast = (data.credits && data.credits.cast || []).slice(0, 5).map(c => c.name);
+    unified.description = data.overview || unified.description;
+    const trailer = (data.videos && data.videos.results || []).find(v => v.site === 'YouTube' && v.type === 'Trailer')
+                  || (data.videos && data.videos.results || []).find(v => v.site === 'YouTube');
+    unified.trailerKey = trailer ? trailer.key : null;
+    if (unified.tmdbType === 'tv' && data.seasons) {
+      unified.tvSeasons = data.seasons.filter(s => s.season_number > 0);
+      unified.tvId = unified.tmdbId;
+    }
+    return unified;
+  }
+
+  async function fetchTvSeasonEpisodes(tvId, seasonNumber) {
+    const data = await tmdbFetch(`tv/${tvId}/season/${seasonNumber}`);
+    if (!data || !data.episodes) return [];
+    return data.episodes;
+  }
+
+  /* =========================================================================
+     بناء البطاقات
+     ========================================================================= */
+  function createCardHTML(item) {
+    return `
+      <div data-uid="${item.uid}" class="media-card bg-brandSec rounded-xl overflow-hidden border border-brandBorder hover:border-brandGold/50 transition-all duration-300 group cursor-pointer shadow-lg hover:-translate-y-1">
+        <div class="relative aspect-[2/3] overflow-hidden">
+          <img src="${item.poster}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <span class="absolute top-2 right-2 bg-brandBg/90 text-brandGold text-[11px] font-bold px-2 py-0.5 rounded border border-brandBorder">
+            ⭐ ${item.rating}
+          </span>
+          <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+            <div class="w-10 h-10 rounded-full bg-brandGold text-brandBg flex items-center justify-center font-bold shadow-xl">
+              <i class="fa-solid fa-play"></i>
             </div>
           </div>
-          <div class="p-3">
-            <h4 class="font-bold text-xs sm:text-sm text-brandText group-hover:text-brandGold transition-colors truncate">${item.title}</h4>
-            <p class="text-[11px] text-brandMuted mt-1">${item.year} • ${item.category}</p>
+        </div>
+        <div class="p-3">
+          <h4 class="font-bold text-xs sm:text-sm text-brandText group-hover:text-brandGold transition-colors truncate">${item.title}</h4>
+          <p class="text-[11px] text-brandMuted mt-1">${item.year} • ${item.category}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  // تفويض النقر على أي بطاقة في الصفحة لفتح التفاصيل (يمنع مشاكل علامات الاقتباس بالعناوين)
+  document.addEventListener('click', (e) => {
+    const card = e.target.closest('.media-card');
+    if (card) openDetailsModal(card.dataset.uid);
+  });
+
+  function renderHomeSections() {
+    const iraqiContainer = document.getElementById('iraqiContainer');
+    iraqiContainer.innerHTML = '';
+    mediaDatabase.forEach(item => registerItem(localToUnified(item)));
+    mediaDatabase.filter(i => i.category === 'أفلام عراقية').forEach(item => {
+      iraqiContainer.innerHTML += createCardHTML(state.items['local-' + item.id]);
+    });
+    loadTrending();
+  }
+
+  /* =========================================================================
+     نافذة التفاصيل
+     ========================================================================= */
+  let currentItem = null;
+
+  async function openDetailsModal(uid) {
+    let item = state.items[uid];
+    if (!item) return;
+    currentItem = item;
+
+    document.getElementById('detailsModal').classList.remove('hidden');
+    document.getElementById('detailsModal').classList.add('flex');
+    fillDetailsModal(item, true);
+
+    if (item.source === 'tmdb' && item.cast === null) {
+      item = await fetchTmdbDetails(item);
+      if (currentItem.uid === item.uid) fillDetailsModal(item, false);
+    }
+  }
+
+  function fillDetailsModal(item, loading) {
+    document.getElementById('modalBackdrop').src = item.backdrop || item.poster;
+    document.getElementById('modalCategoryBadge').innerText = item.category;
+    document.getElementById('modalRating').innerText = item.rating;
+    document.getElementById('modalYear').innerText = item.year;
+    document.getElementById('modalTitle').innerText = item.title;
+    document.getElementById('modalDescription').innerText = item.description;
+    document.getElementById('modalCast').innerText = loading && item.source === 'tmdb'
+      ? 'جاري تحميل طاقم العمل...'
+      : (item.cast && item.cast.length ? item.cast.join('، ') : 'غير متوفر');
+
+    const seasonsSec = document.getElementById('seasonsSection');
+    const playBtn = document.getElementById('modalPlayBtn');
+    playBtn.onclick = null;
+
+    if (item.type === 'series') {
+      seasonsSec.classList.remove('hidden');
+      playBtn.innerHTML = `<i class="fa-solid fa-play"></i> ابدأ الحلقات`;
+      if (item.source === 'local') {
+        populateLocalSeasons(item.raw);
+        const firstSeason = Object.keys(item.raw.seasons)[0];
+        const firstEp = item.raw.seasons[firstSeason][0];
+        playBtn.onclick = () => playMovie(firstEp.video, 'file', `${item.title} - ${firstEp.title}`);
+      } else if (!loading) {
+        populateTmdbSeasons(item);
+        playBtn.onclick = () => {
+          if (item.trailerKey) playMovie(item.trailerKey, 'youtube', item.title + ' - إعلان');
+        };
+      }
+    } else {
+      seasonsSec.classList.add('hidden');
+      playBtn.innerHTML = `<i class="fa-solid fa-play"></i> تشغيل الآن`;
+      if (item.source === 'local') {
+        playBtn.onclick = () => playMovie(item.raw.video, 'file', item.title);
+      } else {
+        playBtn.onclick = () => {
+          if (item.trailerKey) playMovie(item.trailerKey, 'youtube', item.title + ' - إعلان');
+          else alert('لا يتوفر إعلان مرئي لهذا العمل حالياً.');
+        };
+      }
+    }
+
+    updateWatchlistButton(item.uid);
+    document.getElementById('modalWatchlistBtn').onclick = () => { toggleWatchlist(item.uid); updateWatchlistButton(item.uid); };
+
+    // أعمال مشابهة (نأخذها من نفس القسم/التصنيف المحلي كعيّنة سريعة)
+    const similarContainer = document.getElementById('similarContainer');
+    similarContainer.innerHTML = '';
+    Object.values(state.items).filter(i => i.uid !== item.uid).slice(0, 4).forEach(sim => {
+      similarContainer.innerHTML += `
+        <div data-uid="${sim.uid}" class="media-card bg-brandCard rounded-lg overflow-hidden border border-brandBorder cursor-pointer group">
+          <div class="aspect-video overflow-hidden">
+            <img src="${sim.poster}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+          </div>
+          <div class="p-2">
+            <h5 class="text-xs font-bold text-brandText truncate">${sim.title}</h5>
+            <p class="text-[10px] text-brandMuted">${sim.year}</p>
           </div>
         </div>
       `;
-    }
+    });
+  }
 
-    // Open Details Modal
-    function openDetailsModal(id) {
-      const item = mediaDatabase.find(i => i.id === id);
-      if (!item) return;
-      currentSelectedItem = item;
+  function updateWatchlistButton(uid) {
+    const btn = document.getElementById('modalWatchlistBtn');
+    const inList = state.watchlist.includes(uid);
+    btn.innerHTML = inList
+      ? `<i class="fa-solid fa-check text-brandGold"></i> في قائمتي`
+      : `<i class="fa-solid fa-plus"></i> قائمتي`;
+  }
 
-      document.getElementById('modalBackdrop').src = item.backdrop;
-      document.getElementById('modalCategoryBadge').innerText = item.category;
-      document.getElementById('modalRating').innerText = item.rating;
-      document.getElementById('modalYear').innerText = item.year;
-      document.getElementById('modalTitle').innerText = item.title;
-      document.getElementById('modalDescription').innerText = item.description;
-      document.getElementById('modalCast').innerText = item.cast.join(', ');
+  function closeDetailsModal() {
+    document.getElementById('detailsModal').classList.add('hidden');
+    document.getElementById('detailsModal').classList.remove('flex');
+  }
 
-      const seasonsSec = document.getElementById('seasonsSection');
-      const playBtn = document.getElementById('modalPlayBtn');
+  // مواسم/حلقات محلية
+  function populateLocalSeasons(rawItem) {
+    const select = document.getElementById('seasonSelect');
+    select.innerHTML = '';
+    select.onchange = () => renderLocalEpisodes(rawItem, select.value);
+    Object.keys(rawItem.seasons).forEach(seasonName => {
+      select.innerHTML += `<option value="${seasonName}">${seasonName}</option>`;
+    });
+    renderLocalEpisodes(rawItem, Object.keys(rawItem.seasons)[0]);
+  }
 
-      if (item.type === 'series') {
-        seasonsSec.classList.remove('hidden');
-        playBtn.innerHTML = `<i class="fa-solid fa-play"></i> ابدأ الحلقات`;
-        playBtn.onclick = () => {
-          playMovie(item.seasons['الموسم الأول'][0].video, `${item.title} - ${item.seasons['الموسم الأول'][0].title}`);
-        };
-        populateSeasons(item);
-      } else {
-        seasonsSec.classList.add('hidden');
-        playBtn.innerHTML = `<i class="fa-solid fa-play"></i> تشغيل الآن`;
-        playBtn.onclick = () => playMovie(item.video, item.title);
-      }
-
-      document.getElementById('modalWatchlistBtn').onclick = () => toggleWatchlist(item.title);
-
-      const similarContainer = document.getElementById('similarContainer');
-      similarContainer.innerHTML = '';
-      mediaDatabase.filter(i => i.id !== id).slice(0, 4).forEach(sim => {
-        similarContainer.innerHTML += `
-          <div onclick="openDetailsModal(${sim.id})" class="bg-brandCard rounded-lg overflow-hidden border border-brandBorder cursor-pointer group">
-            <div class="aspect-video overflow-hidden">
-              <img src="${sim.poster}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
-            </div>
-            <div class="p-2">
-              <h5 class="text-xs font-bold text-brandText truncate">${sim.title}</h5>
-              <p class="text-[10px] text-brandMuted">${sim.year}</p>
-            </div>
+  function renderLocalEpisodes(rawItem, seasonName) {
+    const container = document.getElementById('episodesContainer');
+    container.innerHTML = '';
+    (rawItem.seasons[seasonName] || []).forEach((ep, idx) => {
+      const btn = document.createElement('div');
+      btn.className = 'bg-brandBg hover:bg-brandCard border border-brandBorder p-3 rounded-xl flex items-center justify-between cursor-pointer group transition-all';
+      btn.innerHTML = `
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-brandGold/20 text-brandGold flex items-center justify-center font-bold text-xs">
+            <i class="fa-solid fa-play"></i>
           </div>
-        `;
-      });
+          <span class="text-xs font-bold text-brandText group-hover:text-brandGold transition-colors">${ep.title}</span>
+        </div>
+        <span class="text-[10px] text-brandMuted">متاح</span>
+      `;
+      btn.addEventListener('click', () => playMovie(ep.video, 'file', `${rawItem.title} - ${ep.title}`));
+      container.appendChild(btn);
+    });
+  }
 
-      document.getElementById('detailsModal').classList.remove('hidden');
-      document.getElementById('detailsModal').classList.add('flex');
+  // مواسم/حلقات TMDb (تُحمَّل عند الطلب)
+  function populateTmdbSeasons(item) {
+    const select = document.getElementById('seasonSelect');
+    select.innerHTML = '';
+    const seasons = item.tvSeasons || [];
+    if (!seasons.length) {
+      select.innerHTML = `<option>لا توجد بيانات مواسم</option>`;
+      document.getElementById('episodesContainer').innerHTML = `<p class="text-xs text-brandMuted col-span-full">لا تتوفر بيانات حلقات لهذا العمل حالياً.</p>`;
+      return;
     }
+    seasons.forEach(s => { select.innerHTML += `<option value="${s.season_number}">${s.name}</option>`; });
+    select.onchange = () => renderTmdbEpisodes(item, select.value);
+    renderTmdbEpisodes(item, seasons[0].season_number);
+  }
 
-    function closeDetailsModal() {
-      document.getElementById('detailsModal').classList.add('hidden');
-      document.getElementById('detailsModal').classList.remove('flex');
+  async function renderTmdbEpisodes(item, seasonNumber) {
+    const container = document.getElementById('episodesContainer');
+    container.innerHTML = `<p class="text-xs text-brandMuted col-span-full flex items-center gap-2"><span class="spinner"></span> جاري تحميل الحلقات...</p>`;
+    const episodes = await fetchTvSeasonEpisodes(item.tvId, seasonNumber);
+    container.innerHTML = '';
+    if (!episodes.length) {
+      container.innerHTML = `<p class="text-xs text-brandMuted col-span-full">لا تتوفر حلقات لهذا الموسم.</p>`;
+      return;
     }
-
-    function populateSeasons(item) {
-      const select = document.getElementById('seasonSelect');
-      select.innerHTML = '';
-      Object.keys(item.seasons).forEach(seasonName => {
-        select.innerHTML += `<option value="${seasonName}">${seasonName}</option>`;
-      });
-      renderEpisodes(item, Object.keys(item.seasons)[0]);
-    }
-
-    function changeSeason(seasonName) {
-      if (currentSelectedItem && currentSelectedItem.seasons) {
-        renderEpisodes(currentSelectedItem, seasonName);
-      }
-    }
-
-    function renderEpisodes(item, seasonName) {
-      const container = document.getElementById('episodesContainer');
-      container.innerHTML = '';
-      const episodes = item.seasons[seasonName] || [];
-      episodes.forEach(ep => {
-        container.innerHTML += `
-          <div onclick="playMovie('${ep.video}', '${item.title} - ${ep.title}')" class="bg-brandBg hover:bg-brandCard border border-brandBorder p-3 rounded-xl flex items-center justify-between cursor-pointer group transition-all">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-lg bg-brandGold/20 text-brandGold flex items-center justify-center font-bold text-xs">
-                <i class="fa-solid fa-play"></i>
-              </div>
-              <span class="text-xs font-bold text-brandText group-hover:text-brandGold transition-colors">${ep.title}</span>
-            </div>
-            <span class="text-[10px] text-brandMuted">مباشر</span>
+    episodes.forEach(ep => {
+      const btn = document.createElement('div');
+      btn.className = 'bg-brandBg hover:bg-brandCard border border-brandBorder p-3 rounded-xl flex items-center justify-between cursor-pointer group transition-all';
+      btn.innerHTML = `
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-brandGold/20 text-brandGold flex items-center justify-center font-bold text-xs">
+            <i class="fa-solid fa-play"></i>
           </div>
-        `;
+          <span class="text-xs font-bold text-brandText group-hover:text-brandGold transition-colors">الحلقة ${ep.episode_number}: ${ep.name}</span>
+        </div>
+        <span class="text-[10px] text-brandMuted">إعلان فقط</span>
+      `;
+      btn.addEventListener('click', () => {
+        if (item.trailerKey) playMovie(item.trailerKey, 'youtube', `${item.title} - ${ep.name}`);
+        else alert('لا تتوفر مادة مرئية لهذه الحلقة. أضف رابط الفيديو الخاص بمنصتك في الكود.');
       });
+      container.appendChild(btn);
+    });
+  }
+
+  /* =========================================================================
+     المشغّل (Plyr) — يدعم ملفات mp4 مباشرة وإعلانات YouTube من TMDb
+     ========================================================================= */
+  function playMovie(source, type, title) {
+    closeDetailsModal();
+    document.getElementById('playerMovieTitle').innerText = title;
+    const note = document.getElementById('playerNote');
+
+    if (type === 'youtube') {
+      player.source = { type: 'video', title, sources: [{ src: source, provider: 'youtube' }] };
+      note.textContent = 'هذا إعلان (تريلر) من TMDb/YouTube — لعرض الأفلام كاملة، اربط ملفات الفيديو الخاصة بمنصتك في CONFIG.';
+      note.classList.remove('hidden');
+    } else {
+      player.source = { type: 'video', title, sources: [{ src: source, type: 'video/mp4' }] };
+      note.classList.add('hidden');
     }
 
-    // [تم التعديل هنا لحل مشكلة عدم عرض وتشغيل الفيديو]
-    function playMovie(videoUrl, title) {
-      closeDetailsModal();
-      document.getElementById('playerMovieTitle').innerText = title;
-      
-      // إظهار نافذة المشغل أولاً
-      const playerModal = document.getElementById('playerModal');
-      playerModal.classList.remove('hidden');
-      playerModal.classList.add('flex');
+    document.getElementById('playerModal').classList.remove('hidden');
+    document.getElementById('playerModal').classList.add('flex');
+    player.play();
+  }
 
-      // تعيين المصدر للمشغل
-      player.source = {
-        type: 'video',
-        title: title,
-        sources: [{ src: videoUrl, type: 'video/mp4' }]
-      };
+  function closePlayer() {
+    if (player) player.stop();
+    document.getElementById('playerModal').classList.add('hidden');
+    document.getElementById('playerModal').classList.remove('flex');
+  }
 
-      // الانتظار قليلاً ثم التشغيل لضمان استقرار المشغل
-      setTimeout(() => {
-        player.play().catch(err => {
-          console.log("تعذر التشغيل التلقائي:", err);
-        });
-      }, 300);
+  /* =========================================================================
+     التصفية والبحث
+     ========================================================================= */
+  async function filterByCategory(categoryName) {
+    showFilterView(`تصنيف: ${categoryName}`);
+    const grid = document.getElementById('dynamicGrid');
+    grid.innerHTML = `<p class="col-span-full flex items-center justify-center gap-2 text-brandMuted py-12"><span class="spinner"></span> جاري التحميل...</p>`;
+
+    let localResults = categoryName === 'أفلام' ? mediaDatabase.filter(i => i.type === 'movie') :
+                        categoryName === 'مسلسلات' ? mediaDatabase.filter(i => i.type === 'series') :
+                        mediaDatabase.filter(i => i.category === categoryName);
+    let localUnified = localResults.map(i => state.items['local-' + i.id]);
+
+    let tmdbUnified = [];
+    if (categoryName === 'أفلام') tmdbUnified = await discoverPopular('movie');
+    else if (categoryName === 'مسلسلات') tmdbUnified = await discoverPopular('tv');
+    else if (GENRE_MAP[categoryName]) tmdbUnified = await discoverByGenre(categoryName);
+
+    const all = [...localUnified, ...tmdbUnified];
+    grid.innerHTML = '';
+    if (all.length === 0) {
+      grid.innerHTML = `<p class="text-brandMuted col-span-full text-center py-12">لا توجد عناوين متاحة حالياً تحت هذا التصنيف.</p>`;
+      return;
     }
+    all.forEach(item => grid.innerHTML += createCardHTML(item));
+  }
 
-    function closePlayer() {
-      player.stop();
-      document.getElementById('playerModal').classList.add('hidden');
-      document.getElementById('playerModal').classList.remove('flex');
+  function filterWatchlist() {
+    showFilterView(`قائمتي المحفوظة (${state.watchlist.length})`);
+    const grid = document.getElementById('dynamicGrid');
+    grid.innerHTML = '';
+    if (state.watchlist.length === 0) {
+      grid.innerHTML = `<p class="text-brandMuted col-span-full text-center py-12">قائمتك فارغة حالياً. قم بإضافة أفلام ومسلسلات لمشاهدتها لاحقاً!</p>`;
+      return;
     }
+    state.watchlist.forEach(uid => {
+      const item = state.items[uid];
+      if (item) grid.innerHTML += createCardHTML(item);
+    });
+  }
 
-    function filterByCategory(categoryName) {
-      document.getElementById('defaultSections').classList.add('hidden');
-      document.getElementById('filterHeader').classList.remove('hidden');
-      document.getElementById('filterHeader').classList.add('flex');
-      document.getElementById('dynamicGridContainer').classList.remove('hidden');
-      document.getElementById('filterTitle').innerText = `تصنيف: ${categoryName}`;
+  function showFilterView(title) {
+    document.getElementById('defaultSections').classList.add('hidden');
+    document.getElementById('filterHeader').classList.remove('hidden');
+    document.getElementById('filterHeader').classList.add('flex');
+    document.getElementById('dynamicGridContainer').classList.remove('hidden');
+    document.getElementById('filterTitle').innerText = title;
+    window.location.hash = 'catalog';
+  }
 
-      const grid = document.getElementById('dynamicGrid');
-      grid.innerHTML = '';
+  function resetFilter() {
+    document.getElementById('defaultSections').classList.remove('hidden');
+    document.getElementById('filterHeader').classList.add('hidden');
+    document.getElementById('filterHeader').classList.remove('flex');
+    document.getElementById('dynamicGridContainer').classList.add('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-      let results = categoryName === 'أفلام' ? mediaDatabase.filter(i => i.type === 'movie') :
-                    categoryName === 'مسلسلات' ? mediaDatabase.filter(i => i.type === 'series') :
-                    mediaDatabase.filter(i => i.category === categoryName);
+  async function handleSearch(query) {
+    if (!query.trim()) { resetFilter(); return; }
+    showFilterView(`نتائج البحث عن: "${query}"`);
+    const grid = document.getElementById('dynamicGrid');
+    const spinner = document.getElementById('searchSpinner');
 
-      if (results.length === 0) {
-        grid.innerHTML = `<p class="text-brandMuted col-span-full text-center py-12">لا توجد عناوين متاحة حالياً تحت هذا التصنيف.</p>`;
-        return;
-      }
+    const localMatches = mediaDatabase.filter(i =>
+      i.title.toLowerCase().includes(query.toLowerCase()) ||
+      i.category.toLowerCase().includes(query.toLowerCase())
+    ).map(i => state.items['local-' + i.id]);
 
-      results.forEach(item => grid.innerHTML += createCardHTML(item));
-      window.location.hash = 'catalog';
-    }
+    grid.innerHTML = '';
+    localMatches.forEach(item => grid.innerHTML += createCardHTML(item));
 
-    function filterWatchlist() {
-      document.getElementById('defaultSections').classList.add('hidden');
-      document.getElementById('filterHeader').classList.remove('hidden');
-      document.getElementById('filterHeader').classList.add('flex');
-      document.getElementById('dynamicGridContainer').classList.remove('hidden');
-      document.getElementById('filterTitle').innerText = `قائمتي المحفوظة (${watchlist.length})`;
-
-      const grid = document.getElementById('dynamicGrid');
-      grid.innerHTML = '';
-
-      if (watchlist.length === 0) {
-        grid.innerHTML = `<p class="text-brandMuted col-span-full text-center py-12">قائمتك فارغة حالياً. قم بإضافة أفلام ومسلسلات لمشاهدتها لاحقاً!</p>`;
-        return;
-      }
-
-      watchlist.forEach(title => {
-        const item = mediaDatabase.find(i => i.title === title);
-        if (item) grid.innerHTML += createCardHTML(item);
-      });
-      window.location.hash, window.location.hash = 'catalog';
-    }
-
-    function resetFilter() {
-      document.getElementById('defaultSections').classList.remove('hidden');
-      document.getElementById('filterHeader').classList.add('hidden');
-      document.getElementById('filterHeader').classList.remove('flex');
-      document.getElementById('dynamicGridContainer').classList.add('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function handleSearch(query) {
-      if (!query.trim()) {
-        resetFilter();
-        return;
-      }
-      document.getElementById('defaultSections').classList.add('hidden');
-      document.getElementById('filterHeader').classList.remove('hidden');
-      document.getElementById('filterHeader').classList.add('flex');
-      document.getElementById('dynamicGridContainer').classList.remove('hidden');
-      document.getElementById('filterTitle').innerText = `نتائج البحث عن: "${query}"`;
-
-      const grid = document.getElementById('dynamicGrid');
-      grid.innerHTML = '';
-
-      const matches = mediaDatabase.filter(i => 
-        i.title.toLowerCase().includes(query.toLowerCase()) || 
-        i.category.toLowerCase().includes(query.toLowerCase())
-      );
-
-      if (matches.length === 0) {
+    clearTimeout(searchDebounce);
+    spinner.classList.remove('hidden');
+    searchDebounce = setTimeout(async () => {
+      const tmdbMatches = await tmdbSearch(query);
+      spinner.classList.add('hidden');
+      const all = [...localMatches, ...tmdbMatches];
+      if (all.length === 0) {
         grid.innerHTML = `<p class="text-brandMuted col-span-full text-center py-12">عذراً، لم نجد أي نتائج تطابق بحثك.</p>`;
         return;
       }
+      grid.innerHTML = '';
+      all.forEach(item => grid.innerHTML += createCardHTML(item));
+    }, 400);
+  }
 
-      matches.forEach(item => grid.innerHTML += createCardHTML(item));
+  /* =========================================================================
+     قائمة المشاهدة
+     ========================================================================= */
+  function toggleWatchlist(uid) {
+    const idx = state.watchlist.indexOf(uid);
+    if (idx === -1) {
+      state.watchlist.push(uid);
+      document.getElementById('notifBadge').classList.remove('hidden');
+    } else {
+      state.watchlist.splice(idx, 1);
     }
+    saveWatchlist();
+  }
 
-    function toggleWatchlist(title) {
-      if (!watchlist.includes(title)) {
-        watchlist.push(title);
-        document.getElementById('notifBadge').classList.remove('hidden');
-        alert(`تمت إضافة "${title}" إلى قائمتي بنجاح!`);
-      } else {
-        alert(`"${title}" موجود مسبقاً في قائمتك.`);
-      }
+  /* =========================================================================
+     تسجيل الدخول بحساب Google (Google Identity Services)
+     ========================================================================= */
+  function base64UrlDecode(str) {
+    str = str.replace(/-/g, '+').replace(/_/g, '/');
+    while (str.length % 4) str += '=';
+    return decodeURIComponent(atob(str).split('').map(c =>
+      '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+    ).join(''));
+  }
+
+  function decodeJwt(token) {
+    const payload = token.split('.')[1];
+    return JSON.parse(base64UrlDecode(payload));
+  }
+
+  function handleGoogleCredential(response) {
+    try {
+      const profile = decodeJwt(response.credential);
+      state.user = { name: profile.name, email: profile.email, picture: profile.picture };
+      localStorage.setItem('shoof_user', JSON.stringify(state.user));
+      renderAccountArea();
+      closeLoginModal();
+    } catch (err) {
+      console.error('تعذّر قراءة بيانات حساب Google:', err);
+      alert('حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى.');
     }
+  }
+
+  function initGoogleSignIn() {
+    const warning = document.getElementById('googleConfigWarning');
+    if (!isGoogleConfigured()) {
+      warning.classList.remove('hidden');
+      warning.innerHTML = `لتفعيل تسجيل الدخول بحساب Google بشكل كامل، أنشئ Client ID من
+        <a class="text-brandGold underline" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console</a>
+        وضعه في <code>CONFIG.GOOGLE_CLIENT_ID</code>، ثم أضف نطاق موقعك ضمن "Authorized JavaScript origins".`;
+      return;
+    }
+    if (!window.google || !google.accounts || !google.accounts.id) {
+      // مكتبة Google لم تُحمَّل بعد (تحميل غير متزامن) — أعد المحاولة قريباً
+      setTimeout(initGoogleSignIn, 300);
+      return;
+    }
+    google.accounts.id.initialize({
+      client_id: CONFIG.GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential,
+      auto_select: false
+    });
+    google.accounts.id.renderButton(document.getElementById('googleBtnWrap'), {
+      theme: 'filled_black', shape: 'pill', text: 'continue_with', locale: 'ar'
+    });
+  }
+
+  function openLoginModal() {
+    document.getElementById('loginModal').classList.remove('hidden');
+    document.getElementById('loginModal').classList.add('flex');
+    initGoogleSignIn();
+  }
+  function closeLoginModal() {
+    document.getElementById('loginModal').classList.add('hidden');
+    document.getElementById('loginModal').classList.remove('flex');
+  }
+
+  function logout() {
+    state.user = null;
+    localStorage.removeItem('shoof_user');
+    if (window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect();
+    renderAccountArea();
+  }
+
+  function renderAccountArea() {
+    const area = document.getElementById('accountArea');
+    if (state.user) {
+      area.innerHTML = `
+        <div class="relative">
+          <button id="userMenuBtn" class="flex items-center gap-2 bg-brandSec hover:bg-brandCard px-2 py-1.5 rounded-full border border-brandBorder transition-all">
+            <img src="${state.user.picture}" class="w-7 h-7 rounded-full object-cover" referrerpolicy="no-referrer">
+            <span class="hidden sm:inline text-xs font-semibold pl-1">${state.user.name.split(' ')[0]}</span>
+          </button>
+          <div id="userMenuDropdown" class="hidden absolute left-0 mt-2 w-44 bg-brandSec border border-brandBorder rounded-xl shadow-xl overflow-hidden fade-in">
+            <div class="px-4 py-3 border-b border-brandBorder">
+              <p class="text-xs font-bold text-brandText truncate">${state.user.name}</p>
+              <p class="text-[10px] text-brandMuted truncate">${state.user.email}</p>
+            </div>
+            <button id="logoutBtn" class="w-full text-right px-4 py-2.5 text-xs text-brandMuted hover:text-brandGold hover:bg-brandCard transition-colors">
+              <i class="fa-solid fa-arrow-right-from-bracket ml-1"></i> تسجيل الخروج
+            </button>
+          </div>
+        </div>`;
+      document.getElementById('userMenuBtn').addEventListener('click', () => {
+        document.getElementById('userMenuDropdown').classList.toggle('hidden');
+      });
+      document.getElementById('logoutBtn').addEventListener('click', logout);
+    } else {
+      area.innerHTML = `
+        <button id="loginTrigger" class="flex items-center gap-2 bg-brandGold hover:bg-brandGoldHover text-brandBg px-4 py-2 rounded-full font-bold text-xs transition-all">
+          <i class="fa-brands fa-google"></i> تسجيل الدخول
+        </button>`;
+      document.getElementById('loginTrigger').addEventListener('click', openLoginModal);
+    }
+  }
+
+  /* =========================================================================
+     ربط الأحداث العامة
+     ========================================================================= */
+  document.addEventListener('DOMContentLoaded', () => {
+    initPlyr();
+    renderHomeSections();
+    renderAccountArea();
+
+    document.querySelectorAll('.cat-link').forEach(el => {
+      el.addEventListener('click', (e) => { e.preventDefault(); filterByCategory(el.dataset.cat); });
+    });
+    document.getElementById('navHome').addEventListener('click', (e) => { e.preventDefault(); resetFilter(); });
+    document.getElementById('logoLink').addEventListener('click', (e) => { e.preventDefault(); resetFilter(); });
+    document.getElementById('navWatchlist').addEventListener('click', (e) => { e.preventDefault(); filterWatchlist(); });
+    document.getElementById('resetFilterBtn').addEventListener('click', resetFilter);
+
+    document.getElementById('heroDetailsBtn').addEventListener('click', () => openDetailsModal('local-3'));
+    document.getElementById('heroWatchlistBtn').addEventListener('click', () => {
+      toggleWatchlist('local-3');
+      const inList = state.watchlist.includes('local-3');
+      document.getElementById('heroWatchlistBtn').innerHTML = inList
+        ? `<i class="fa-solid fa-check"></i> في قائمتي` : `<i class="fa-solid fa-plus"></i> أضف إلى قائمتي`;
+    });
+
+    document.getElementById('closeDetailsBtn').addEventListener('click', closeDetailsModal);
+    document.getElementById('closePlayerBtn').addEventListener('click', closePlayer);
+    document.getElementById('closeLoginBtn').addEventListener('click', closeLoginModal);
+    document.getElementById('guestLoginBtn').addEventListener('click', closeLoginModal);
+
+    document.getElementById('notifBtn').addEventListener('click', () => {
+      document.getElementById('notifBadge').classList.add('hidden');
+    });
 
     document.getElementById('searchBtn').addEventListener('click', () => {
-      document.getElementById('searchBar').classList.toggle('hidden');
-      document.getElementById('searchInput').focus();
+      const bar = document.getElementById('searchBar');
+      bar.classList.toggle('hidden');
+      if (!bar.classList.contains('hidden')) document.getElementById('searchInput').focus();
     });
     document.getElementById('closeSearch').addEventListener('click', () => {
       document.getElementById('searchBar').classList.add('hidden');
+      document.getElementById('searchInput').value = '';
       resetFilter();
     });
 
-    renderHomeSections();
+    // إغلاق القوائم المنسدلة والنوافذ عند الضغط خارجها
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('userMenuDropdown');
+      if (dropdown && !dropdown.classList.contains('hidden') && !e.target.closest('#accountArea')) {
+        dropdown.classList.add('hidden');
+      }
+    });
+    [document.getElementById('detailsModal'), document.getElementById('playerModal'), document.getElementById('loginModal')].forEach(modal => {
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'), modal.classList.remove('flex'); });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDetailsModal(); closePlayer(); closeLoginModal();
+      }
+    });
+  });
   </script>
 </body>
 </html>
