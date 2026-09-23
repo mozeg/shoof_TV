@@ -16,9 +16,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
-  <!-- Plyr.js CSS -->
-  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-
   <!-- Google Identity Services (تسجيل الدخول بحساب Google) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -56,10 +53,6 @@
     .hero-gradient {
       background: linear-gradient(180deg, rgba(7, 19, 28, 0.4) 0%, rgba(7, 19, 28, 0.95) 85%, #07131C 100%),
                   linear-gradient(90deg, rgba(7, 19, 28, 0.9) 0%, rgba(7, 19, 28, 0.3) 50%, rgba(7, 19, 28, 0.8) 100%);
-    }
-    :root {
-      --plyr-color-main: #E7B86A;
-      --plyr-video-control-color: #F4F1E9;
     }
     .spinner {
       width: 18px; height: 18px; border-radius: 50%;
@@ -107,7 +100,7 @@
           <span id="notifBadge" class="hidden absolute top-2 left-2 w-2 h-2 rounded-full bg-brandGold shadow-[0_0_8px_#E7B86A]"></span>
         </button>
 
-        <!-- منطقة الحساب: تتبدل بين زر تسجيل الدخول وصورة المستخدم -->
+        <!-- منطقة الحساب -->
         <div id="accountArea"></div>
       </div>
     </div>
@@ -277,7 +270,7 @@
           <p id="modalCast" class="text-sm text-brandText">الممثلون...</p>
         </div>
 
-        <!-- Seasons & Episodes Section (Only visible for series) -->
+        <!-- Seasons & Episodes Section -->
         <div id="seasonsSection" class="hidden space-y-4 pt-4 border-t border-brandBorder">
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-bold text-brandText flex items-center gap-2">
@@ -297,21 +290,22 @@
     </div>
   </div>
 
-  <!-- ================= PLYR PLAYER MODAL ================= -->
+  <!-- ================= VIDSRC EMBED PLAYER MODAL ================= -->
   <div id="playerModal" class="fixed inset-0 z-50 bg-black/95 hidden items-center justify-center p-2 sm:p-6 backdrop-blur-lg">
     <div class="relative w-full max-w-5xl bg-brandSec rounded-2xl overflow-hidden border border-brandBorder shadow-2xl">
       <div class="p-4 bg-brandCard flex items-center justify-between border-b border-brandBorder">
         <h3 id="playerMovieTitle" class="font-bold text-brandGold text-base sm:text-lg flex items-center gap-2">
-          <i class="fa-solid fa-circle-play"></i> جاري العرض
+          <i class="fa-solid fa-circle-play"></i> جاري العرض عبر VidSrc
         </h3>
         <button id="closePlayerBtn" class="w-8 h-8 rounded-full bg-brandBg hover:bg-brandGold hover:text-brandBg flex items-center justify-center text-brandMuted transition-all">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      <div class="aspect-video w-full bg-black">
-        <div id="plyrPlayer" data-plyr-provider="youtube" data-plyr-embed-id=""></div>
-      </div>
-      <p id="playerNote" class="text-[11px] text-brandMuted p-3 bg-brandCard/60 hidden"></p>
+      <!-- حاوية المشغل الخارجية (تحمل iframe سيرفر VidSrc) -->
+      <div id="playerContainer" class="aspect-video w-full bg-black relative"></div>
+      <p id="playerNote" class="text-[11px] text-brandMuted p-3 bg-brandCard/60">
+        💡 ملاحظة: يمكنك اختيار سيرفر (Nitro) وتفعيل الترجمة العربية مباشرة من قائمة السيرفرات داخل المشغل.
+      </p>
     </div>
   </div>
 
@@ -352,19 +346,13 @@
     </div>
   </footer>
 
-  <!-- Plyr.js JS -->
-  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-
   <script>
   /* =========================================================================
-     إعدادات عامة — ضع مفاتيحك هنا
+     إعدادات عامة
      ========================================================================= */
   const CONFIG = {
-    // مفتاح TMDb API (v3) — أنشئه مجاناً من https://www.themoviedb.org/settings/api
     TMDB_API_KEY: 'c1532aa2e726cf64009b81018359068c',
     TMDB_LANG: 'ar',
-    // Client ID الخاص بمشروعك على Google Cloud Console (OAuth 2.0)
-    // يجب إضافة نطاق موقعك ضمن "Authorized JavaScript origins"
     GOOGLE_CLIENT_ID: '472124197553-ljunpv7h0rleid5souno4tg0rtcbtj3m.apps.googleusercontent.com'
   };
 
@@ -378,17 +366,7 @@
   };
 
   /* =========================================================================
-     Plyr player (يبدأ بدون مصدر، يتم تعبئته عند التشغيل)
-     ========================================================================= */
-  let player = null;
-  function initPlyr() {
-    player = new Plyr('#plyrPlayer', {
-      i18n: { play: 'تشغيل', pause: 'إيقاف مؤقت', mute: 'كتم الصوت', fullscreen: 'ملء الشاشة' }
-    });
-  }
-
-  /* =========================================================================
-     قاعدة بيانات محلية (تُستخدم كمحتوى عراقي مميز ودعم احتياطي بدون إنترنت)
+     قاعدة بيانات محلية (للمحتوى العراقي والمحتوى الاحتياطي)
      ========================================================================= */
   const mediaDatabase = [
     {
@@ -490,14 +468,13 @@
      حالة التطبيق
      ========================================================================= */
   const state = {
-    items: {},           // uid -> item موحّد
+    items: {},
     watchlist: JSON.parse(localStorage.getItem('shoof_watchlist') || '[]'),
     user: JSON.parse(localStorage.getItem('shoof_user') || 'null')
   };
 
   function saveWatchlist() { localStorage.setItem('shoof_watchlist', JSON.stringify(state.watchlist)); }
 
-  // تحويل عنصر محلي إلى الشكل الموحّد
   function localToUnified(item) {
     return {
       uid: 'local-' + item.id,
@@ -515,7 +492,6 @@
     };
   }
 
-  // تحويل نتيجة TMDb إلى الشكل الموحّد
   function tmdbToUnified(raw, mediaType) {
     const type = mediaType || raw.media_type || (raw.title ? 'movie' : 'tv');
     const title = raw.title || raw.name || 'بدون عنوان';
@@ -533,7 +509,7 @@
       poster: raw.poster_path ? TMDB_IMG + raw.poster_path : 'https://placehold.co/400x600/0E202D/E7B86A?text=شوف',
       backdrop: raw.backdrop_path ? TMDB_IMG_BIG + raw.backdrop_path : (raw.poster_path ? TMDB_IMG_BIG + raw.poster_path : ''),
       description: raw.overview || 'لا يوجد وصف متاح حالياً.',
-      cast: null // يُعبّأ لاحقاً عند فتح التفاصيل
+      cast: null
     };
   }
 
@@ -610,13 +586,10 @@
   async function fetchTmdbDetails(unified) {
     if (unified.source !== 'tmdb') return unified;
     const path = (unified.tmdbType === 'tv' ? 'tv/' : 'movie/') + unified.tmdbId;
-    const data = await tmdbFetch(path, { append_to_response: 'credits,videos' });
+    const data = await tmdbFetch(path, { append_to_response: 'credits' });
     if (!data) return unified;
     unified.cast = (data.credits && data.credits.cast || []).slice(0, 5).map(c => c.name);
     unified.description = data.overview || unified.description;
-    const trailer = (data.videos && data.videos.results || []).find(v => v.site === 'YouTube' && v.type === 'Trailer')
-                  || (data.videos && data.videos.results || []).find(v => v.site === 'YouTube');
-    unified.trailerKey = trailer ? trailer.key : null;
     if (unified.tmdbType === 'tv' && data.seasons) {
       unified.tvSeasons = data.seasons.filter(s => s.season_number > 0);
       unified.tvId = unified.tmdbId;
@@ -655,7 +628,6 @@
     `;
   }
 
-  // تفويض النقر على أي بطاقة في الصفحة لفتح التفاصيل (يمنع مشاكل علامات الاقتباس بالعناوين)
   document.addEventListener('click', (e) => {
     const card = e.target.closest('.media-card');
     if (card) openDetailsModal(card.dataset.uid);
@@ -708,35 +680,29 @@
 
     if (item.type === 'series') {
       seasonsSec.classList.remove('hidden');
-      playBtn.innerHTML = `<i class="fa-solid fa-play"></i> ابدأ الحلقات`;
+      playBtn.innerHTML = `<i class="fa-solid fa-play"></i> ابدأ الحلقات (الموسم 1 - الحلقة 1)`;
       if (item.source === 'local') {
         populateLocalSeasons(item.raw);
         const firstSeason = Object.keys(item.raw.seasons)[0];
         const firstEp = item.raw.seasons[firstSeason][0];
-        playBtn.onclick = () => playMovie(firstEp.video, 'file', `${item.title} - ${firstEp.title}`);
+        playBtn.onclick = () => playMediaFile(firstEp.video, `${item.title} - ${firstEp.title}`);
       } else if (!loading) {
         populateTmdbSeasons(item);
-        playBtn.onclick = () => {
-          if (item.trailerKey) playMovie(item.trailerKey, 'youtube', item.title + ' - إعلان');
-        };
+        playBtn.onclick = () => playVidSrc(item, 1, 1);
       }
     } else {
       seasonsSec.classList.add('hidden');
-      playBtn.innerHTML = `<i class="fa-solid fa-play"></i> تشغيل الآن`;
+      playBtn.innerHTML = `<i class="fa-solid fa-play"></i> تشغيل الآن (VidSrc)`;
       if (item.source === 'local') {
-        playBtn.onclick = () => playMovie(item.raw.video, 'file', item.title);
+        playBtn.onclick = () => playMediaFile(item.raw.video, item.title);
       } else {
-        playBtn.onclick = () => {
-          if (item.trailerKey) playMovie(item.trailerKey, 'youtube', item.title + ' - إعلان');
-          else alert('لا يتوفر إعلان مرئي لهذا العمل حالياً.');
-        };
+        playBtn.onclick = () => playVidSrc(item);
       }
     }
 
     updateWatchlistButton(item.uid);
     document.getElementById('modalWatchlistBtn').onclick = () => { toggleWatchlist(item.uid); updateWatchlistButton(item.uid); };
 
-    // أعمال مشابهة (نأخذها من نفس القسم/التصنيف المحلي كعيّنة سريعة)
     const similarContainer = document.getElementById('similarContainer');
     similarContainer.innerHTML = '';
     Object.values(state.items).filter(i => i.uid !== item.uid).slice(0, 4).forEach(sim => {
@@ -767,7 +733,6 @@
     document.getElementById('detailsModal').classList.remove('flex');
   }
 
-  // مواسم/حلقات محلية
   function populateLocalSeasons(rawItem) {
     const select = document.getElementById('seasonSelect');
     select.innerHTML = '';
@@ -781,7 +746,7 @@
   function renderLocalEpisodes(rawItem, seasonName) {
     const container = document.getElementById('episodesContainer');
     container.innerHTML = '';
-    (rawItem.seasons[seasonName] || []).forEach((ep, idx) => {
+    (rawItem.seasons[seasonName] || []).forEach((ep) => {
       const btn = document.createElement('div');
       btn.className = 'bg-brandBg hover:bg-brandCard border border-brandBorder p-3 rounded-xl flex items-center justify-between cursor-pointer group transition-all';
       btn.innerHTML = `
@@ -793,12 +758,11 @@
         </div>
         <span class="text-[10px] text-brandMuted">متاح</span>
       `;
-      btn.addEventListener('click', () => playMovie(ep.video, 'file', `${rawItem.title} - ${ep.title}`));
+      btn.addEventListener('click', () => playMediaFile(ep.video, `${rawItem.title} - ${ep.title}`));
       container.appendChild(btn);
     });
   }
 
-  // مواسم/حلقات TMDb (تُحمَّل عند الطلب)
   function populateTmdbSeasons(item) {
     const select = document.getElementById('seasonSelect');
     select.innerHTML = '';
@@ -832,40 +796,57 @@
           </div>
           <span class="text-xs font-bold text-brandText group-hover:text-brandGold transition-colors">الحلقة ${ep.episode_number}: ${ep.name}</span>
         </div>
-        <span class="text-[10px] text-brandMuted">إعلان فقط</span>
+        <span class="text-[10px] text-brandGold">تشغيل (VidSrc)</span>
       `;
-      btn.addEventListener('click', () => {
-        if (item.trailerKey) playMovie(item.trailerKey, 'youtube', `${item.title} - ${ep.name}`);
-        else alert('لا تتوفر مادة مرئية لهذه الحلقة. أضف رابط الفيديو الخاص بمنصتك في الكود.');
-      });
+      btn.addEventListener('click', () => playVidSrc(item, seasonNumber, ep.episode_number, ep.name));
       container.appendChild(btn);
     });
   }
 
   /* =========================================================================
-     المشغّل (Plyr) — يدعم ملفات mp4 مباشرة وإعلانات YouTube من TMDb
+     المشغل الخارجي (VidSrc Embed)
      ========================================================================= */
-  function playMovie(source, type, title) {
+  function playVidSrc(item, season = 1, episode = 1, epName = '') {
     closeDetailsModal();
-    document.getElementById('playerMovieTitle').innerText = title;
-    const note = document.getElementById('playerNote');
+    let embedUrl = '';
+    let title = item.title;
 
-    if (type === 'youtube') {
-      player.source = { type: 'video', title, sources: [{ src: source, provider: 'youtube' }] };
-      note.textContent = 'هذا إعلان (تريلر) من TMDb/YouTube — لعرض الأفلام كاملة، اربط ملفات الفيديو الخاصة بمنصتك في CONFIG.';
-      note.classList.remove('hidden');
+    if (item.type === 'series') {
+      embedUrl = `https://vidsrc.xyz/embed/tv?tmdb=${item.tmdbId}&season=${season}&episode=${episode}`;
+      if (epName) title += ` - الموسم ${season} الحلقة ${episode}`;
     } else {
-      player.source = { type: 'video', title, sources: [{ src: source, type: 'video/mp4' }] };
-      note.classList.add('hidden');
+      embedUrl = `https://vidsrc.xyz/embed/movie?tmdb=${item.tmdbId}`;
     }
+
+    document.getElementById('playerMovieTitle').innerText = title;
+    const container = document.getElementById('playerContainer');
+    
+    container.innerHTML = `
+      <iframe src="${embedUrl}" class="w-full h-full border-0 absolute inset-0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
+    `;
 
     document.getElementById('playerModal').classList.remove('hidden');
     document.getElementById('playerModal').classList.add('flex');
-    player.play();
+  }
+
+  function playMediaFile(videoUrl, title) {
+    closeDetailsModal();
+    document.getElementById('playerMovieTitle').innerText = title;
+    const container = document.getElementById('playerContainer');
+
+    container.innerHTML = `
+      <video class="w-full h-full absolute inset-0 bg-black" controls autoplay>
+        <source src="${videoUrl}" type="video/mp4">
+        متصفحك لا يدعم تشغيل الفيديو.
+      </video>
+    `;
+
+    document.getElementById('playerModal').classList.remove('hidden');
+    document.getElementById('playerModal').classList.add('flex');
   }
 
   function closePlayer() {
-    if (player) player.stop();
+    document.getElementById('playerContainer').innerHTML = ''; // إيقاف وإزالة الـ iframe أو الفيديو
     document.getElementById('playerModal').classList.add('hidden');
     document.getElementById('playerModal').classList.remove('flex');
   }
@@ -972,7 +953,7 @@
   }
 
   /* =========================================================================
-     تسجيل الدخول بحساب Google (Google Identity Services)
+     تسجيل الدخول بحساب Google
      ========================================================================= */
   function base64UrlDecode(str) {
     str = str.replace(/-/g, '+').replace(/_/g, '/');
@@ -1010,7 +991,6 @@
       return;
     }
     if (!window.google || !google.accounts || !google.accounts.id) {
-      // مكتبة Google لم تُحمَّل بعد (تحميل غير متزامن) — أعد المحاولة قريباً
       setTimeout(initGoogleSignIn, 300);
       return;
     }
@@ -1077,7 +1057,6 @@
      ربط الأحداث العامة
      ========================================================================= */
   document.addEventListener('DOMContentLoaded', () => {
-    initPlyr();
     renderHomeSections();
     renderAccountArea();
 
@@ -1117,7 +1096,6 @@
       resetFilter();
     });
 
-    // إغلاق القوائم المنسدلة والنوافذ عند الضغط خارجها
     document.addEventListener('click', (e) => {
       const dropdown = document.getElementById('userMenuDropdown');
       if (dropdown && !dropdown.classList.contains('hidden') && !e.target.closest('#accountArea')) {
@@ -1125,7 +1103,7 @@
       }
     });
     [document.getElementById('detailsModal'), document.getElementById('playerModal'), document.getElementById('loginModal')].forEach(modal => {
-      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'), modal.classList.remove('flex'); });
+      modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); closePlayer(); } });
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
