@@ -16,6 +16,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
+  <!-- Plyr.js CSS -->
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
   <!-- Google Identity Services (تسجيل الدخول بحساب Google) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -53,6 +56,10 @@
     .hero-gradient {
       background: linear-gradient(180deg, rgba(7, 19, 28, 0.4) 0%, rgba(7, 19, 28, 0.95) 85%, #07131C 100%),
                   linear-gradient(90deg, rgba(7, 19, 28, 0.9) 0%, rgba(7, 19, 28, 0.3) 50%, rgba(7, 19, 28, 0.8) 100%);
+    }
+    :root {
+      --plyr-color-main: #E7B86A;
+      --plyr-video-control-color: #F4F1E9;
     }
     .spinner {
       width: 18px; height: 18px; border-radius: 50%;
@@ -131,10 +138,10 @@
           <span id="heroMeta" class="text-brandMuted">2026 • دراما / ملحمة</span>
         </div>
 
-        <h1 id="heroTitle" class="text-4xl sm:text-6xl font-extrabold text-brandText tracking-tight">صراع العروش العراقية</h1>
-        <p id="heroTagline" class="text-brandGold font-semibold text-lg sm:text-xl">ملحمة التاريخ والتحالفات الكبرى</p>
+        <h1 id="heroTitle" class="text-4xl sm:text-6xl font-extrabold text-brandText tracking-tight">أحدث الأفلام العالمية والعراقية</h1>
+        <p id="heroTagline" class="text-brandGold font-semibold text-lg sm:text-xl">بث مباشر بجودة عالية عبر Vidsrc</p>
         <p id="heroDesc" class="text-brandMuted text-sm sm:text-base leading-relaxed line-clamp-3">
-          ملحمة درامية تاريخية ضخمة تتناول الصراعات والتحالفات عبر العصور في بلاد الرافدين، حيث تروى قصص الشرف والبطولة.
+          استمتع بأحدث الأفلام والمسلسلات مع مشغل Vidsrc السريع والآمن، مصنفة حسب الأقسام لتسهيل التصفح.
         </p>
 
         <div class="flex items-center gap-4 pt-4">
@@ -162,7 +169,7 @@
       <section>
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
-            <span class="w-2 h-6 bg-brandGold rounded-full"></span> الأكثر رواجاً حول العالم (TMDb)
+            <span class="w-2 h-6 bg-brandGold rounded-full"></span> الأكثر رواجاً (عبر Vidsrc & TMDb)
           </h2>
           <span id="trendingSpinner" class="spinner"></span>
         </div>
@@ -270,7 +277,7 @@
           <p id="modalCast" class="text-sm text-brandText">الممثلون...</p>
         </div>
 
-        <!-- Seasons & Episodes Section -->
+        <!-- Seasons & Episodes Section (Only visible for series) -->
         <div id="seasonsSection" class="hidden space-y-4 pt-4 border-t border-brandBorder">
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-bold text-brandText flex items-center gap-2">
@@ -295,17 +302,15 @@
     <div class="relative w-full max-w-5xl bg-brandSec rounded-2xl overflow-hidden border border-brandBorder shadow-2xl">
       <div class="p-4 bg-brandCard flex items-center justify-between border-b border-brandBorder">
         <h3 id="playerMovieTitle" class="font-bold text-brandGold text-base sm:text-lg flex items-center gap-2">
-          <i class="fa-solid fa-circle-play"></i> جاري العرض عبر VidSrc
+          <i class="fa-solid fa-circle-play"></i> جاري العرض عبر Vidsrc
         </h3>
         <button id="closePlayerBtn" class="w-8 h-8 rounded-full bg-brandBg hover:bg-brandGold hover:text-brandBg flex items-center justify-center text-brandMuted transition-all">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      <!-- حاوية المشغل الخارجية (تحمل iframe سيرفر VidSrc) -->
-      <div id="playerContainer" class="aspect-video w-full bg-black relative"></div>
-      <p id="playerNote" class="text-[11px] text-brandMuted p-3 bg-brandCard/60">
-        💡 ملاحظة: يمكنك اختيار سيرفر (Nitro) وتفعيل الترجمة العربية مباشرة من قائمة السيرفرات داخل المشغل.
-      </p>
+      <div class="aspect-video w-full bg-black">
+        <iframe id="vidsrcIframe" class="w-full h-full border-0" allowfullscreen></iframe>
+      </div>
     </div>
   </div>
 
@@ -335,8 +340,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-right flex flex-col sm:flex-row items-center justify-between gap-6">
       <div>
         <p class="text-brandText font-bold text-lg mb-1">شوف | SHOOAF</p>
-        <p class="text-xs text-brandMuted">منصة البث السينمائية العربية الأولى للإنتاجات العراقية والعالمية.</p>
-        <p class="text-[10px] text-brandMuted/60 mt-2">تُستخدم بيانات الأفلام والمسلسلات من TMDb، وهذا المنتج غير معتمد أو مصدّق من قِبل TMDb.</p>
+        <p class="text-xs text-brandMuted">منصة البث السينمائية العربية الأولى للإنتاجات العراقية والعالمية عبر Vidsrc.</p>
+        <p class="text-[10px] text-brandMuted/60 mt-2">تُستخدم بيانات الأفلام من TMDb ومشغل الفيديو من vidsrc.to.</p>
       </div>
       <div class="flex items-center gap-6 text-xs text-brandMuted">
         <a href="#" class="hover:text-brandGold transition-colors">سياسة الخصوصية</a>
@@ -366,7 +371,7 @@
   };
 
   /* =========================================================================
-     قاعدة بيانات محلية (للمحتوى العراقي والمحتوى الاحتياطي)
+     قاعدة بيانات محلية للأفلام العراقية المميزة (بدون أفلام تجريبية)
      ========================================================================= */
   const mediaDatabase = [
     {
@@ -375,7 +380,7 @@
       backdrop: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1200&auto=format&fit=crop',
       description: 'في قلب بغداد، تتقاطع مصائر مجموعة من الأشخاص في يوم واحد، لنكتشف أسرار المدينة وتاريخها المليء بالأمل والتحديات.',
       cast: ['أحمد السعدي', 'فاطمة العلي', 'محمد البصري'],
-      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
+      tmdbId: 550 // مثال لربط فيلم عراقي بـ vidsrc عبر معرف شبيه أو فيلم داعم
     },
     {
       id: 2, title: 'رحلة بغداد', type: 'movie', category: 'أفلام عراقية', year: '2025', rating: '8.7',
@@ -383,84 +388,7 @@
       backdrop: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1200&auto=format&fit=crop',
       description: 'توثيق بصري ودرامي فريد لأزقة بغداد العتيقة وحكايات أهلها الطيبين.',
       cast: ['سناء عبدالرحمن', 'مهدي الهلالي'],
-      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
-    },
-    {
-      id: 3, title: 'صراع العروش العراقية', type: 'series', category: 'مسلسلات', year: '2026', rating: '9.2',
-      poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&auto=format&fit=crop',
-      backdrop: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=1200&auto=format&fit=crop',
-      description: 'ملحمة درامية تاريخية ضخمة تتناول الصراعات والتحالفات عبر العصور في بلاد الرافدين.',
-      cast: ['علي الشمري', 'زينب الخفاجي', 'حيدر الجيزاني'],
-      seasons: {
-        'الموسم الأول': [
-          { ep: 1, title: 'الحلقة 1: البداية والعهد', videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
-          { ep: 2, title: 'الحلقة 2: العاصفة', videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' }
-        ],
-        'الموسم الثاني': [
-          { ep: 1, title: 'الحلقة 1: عودة الخصوم', videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' }
-        ]
-      }
-    },
-    {
-      id: 4, title: 'وادي الأمل', type: 'series', category: 'مسلسلات', year: '2025', rating: '9.0',
-      poster: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?q=80&w=600&auto=format&fit=crop',
-      backdrop: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?q=80&w=1200&auto=format&fit=crop',
-      description: 'قصص إنسانية مؤثرة حول المثابرة وتحقيق الأحلام رغم الصعاب في القرى والمحافظات.',
-      cast: ['مريم حسين', 'جواد الشكرجي'],
-      seasons: {
-        'الموسم الأول': [
-          { ep: 1, title: 'الحلقة 1: نقطة الصفر', videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
-          { ep: 2, title: 'الحلقة 2: الإشراقة', videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
-        ]
-      }
-    },
-    {
-      id: 5, title: 'كابتن عراقي', type: 'movie', category: 'أفلام عراقية', year: '2023', rating: '8.1',
-      poster: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&auto=format&fit=crop',
-      backdrop: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1200&auto=format&fit=crop',
-      description: 'قصة ملهمة لشاب كرّس حياته لتدريب الناشئة على كرة القدم في الأحياء الشعبية.',
-      cast: ['سامي قفطان', 'باسم قهار'],
-      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
-    },
-    {
-      id: 6, title: 'أسرار دجلة', type: 'movie', category: 'وثائقي', year: '2024', rating: '8.8',
-      poster: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop',
-      backdrop: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop',
-      description: 'رحلة استكشافية على ضفاف نهر دجلة التاريخي وأسراره البيئية والحضارية.',
-      cast: ['فريق البث الوثائقي'],
-      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-    },
-    {
-      id: 7, title: 'ليلة الرعب', type: 'movie', category: 'رعب', year: '2025', rating: '7.9',
-      poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop',
-      backdrop: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1200&auto=format&fit=crop',
-      description: 'أحداث مرعبة وغامضة تحدث داخل بيت أثري قديم.',
-      cast: ['محمود أبو العباس', 'زهرة بدن'],
-      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
-    },
-    {
-      id: 8, title: 'الظل الغامض', type: 'movie', category: 'إثارة', year: '2026', rating: '8.9',
-      poster: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600&auto=format&fit=crop',
-      backdrop: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop',
-      description: 'محقق يطارد مجرماً ذكياً عبر شبكة الإنترنت في سباق مع الزمن.',
-      cast: ['عدنان شلاش', 'بتول كاظم'],
-      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
-    },
-    {
-      id: 9, title: 'آخر أيام الصيف', type: 'movie', category: 'أفلام عراقية', year: '2025', rating: '8.6',
-      poster: 'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=600&auto=format&fit=crop',
-      backdrop: 'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=1200&auto=format&fit=crop',
-      description: 'ذكريات الطفولة والصداقة في الأيام الأخيرة قبل السفر.',
-      cast: ['هناء محمد', 'قاسم الملاك'],
-      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-    },
-    {
-      id: 10, title: 'ضحكات بغدادية', type: 'movie', category: 'كوميديا', year: '2026', rating: '8.3',
-      poster: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600&auto=format&fit=crop',
-      backdrop: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop',
-      description: 'كوميديا اجتماعية خفيفة تعكس روح الفكاهة والبهجة في الشارع العراقي.',
-      cast: ['إحسان دعدوش', 'علي حسن'],
-      videoType: 'file', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
+      tmdbId: 238
     }
   ];
 
@@ -488,7 +416,8 @@
       poster: item.poster,
       backdrop: item.backdrop,
       description: item.description,
-      cast: item.cast
+      cast: item.cast,
+      tmdbId: item.tmdbId
     };
   }
 
@@ -539,18 +468,12 @@
     const container = document.getElementById('latestContainer');
     if (!isTmdbConfigured()) {
       spinner.classList.add('hidden');
-      container.innerHTML = `<p class="col-span-full text-xs text-brandMuted bg-brandSec border border-brandBorder rounded-xl p-4">
-        لعرض المحتوى العالمي تلقائياً، أضف مفتاح TMDb API الخاص بك في متغيّر <code class="text-brandGold">CONFIG.TMDB_API_KEY</code> داخل الكود.
-      </p>`;
       return;
     }
     const data = await tmdbFetch('trending/all/week');
     spinner.classList.add('hidden');
     container.innerHTML = '';
-    if (!data || !data.results) {
-      container.innerHTML = `<p class="col-span-full text-xs text-brandMuted">تعذّر تحميل المحتوى الرائج حالياً.</p>`;
-      return;
-    }
+    if (!data || !data.results) return;
     data.results.filter(r => r.media_type === 'movie' || r.media_type === 'tv').slice(0, 12).forEach(r => {
       const unified = registerItem(tmdbToUnified(r, r.media_type));
       container.innerHTML += createCardHTML(unified);
@@ -637,14 +560,14 @@
     const iraqiContainer = document.getElementById('iraqiContainer');
     iraqiContainer.innerHTML = '';
     mediaDatabase.forEach(item => registerItem(localToUnified(item)));
-    mediaDatabase.filter(i => i.category === 'أفلام عراقية').forEach(item => {
+    mediaDatabase.filter(i => i.category === 'أفلام عراقية' || i.category === 'دراما').forEach(item => {
       iraqiContainer.innerHTML += createCardHTML(state.items['local-' + item.id]);
     });
     loadTrending();
   }
 
   /* =========================================================================
-     نافذة التفاصيل
+     نافذة التفاصيل وتكامل Vidsrc
      ========================================================================= */
   let currentItem = null;
 
@@ -680,24 +603,16 @@
 
     if (item.type === 'series') {
       seasonsSec.classList.remove('hidden');
-      playBtn.innerHTML = `<i class="fa-solid fa-play"></i> ابدأ الحلقات (الموسم 1 - الحلقة 1)`;
-      if (item.source === 'local') {
-        populateLocalSeasons(item.raw);
-        const firstSeason = Object.keys(item.raw.seasons)[0];
-        const firstEp = item.raw.seasons[firstSeason][0];
-        playBtn.onclick = () => playMediaFile(firstEp.video, `${item.title} - ${firstEp.title}`);
-      } else if (!loading) {
-        populateTmdbSeasons(item);
-        playBtn.onclick = () => playVidSrc(item, 1, 1);
+      playBtn.innerHTML = `<i class="fa-solid fa-play"></i> تشغيل الموسم الأول`;
+      if (item.source === 'tmdb') {
+        playBtn.onclick = () => playVidsrc('tv', item.tmdbId, 1, 1, item.title);
+        if (!loading) populateTmdbSeasons(item);
       }
     } else {
       seasonsSec.classList.add('hidden');
-      playBtn.innerHTML = `<i class="fa-solid fa-play"></i> تشغيل الآن (VidSrc)`;
-      if (item.source === 'local') {
-        playBtn.onclick = () => playMediaFile(item.raw.video, item.title);
-      } else {
-        playBtn.onclick = () => playVidSrc(item);
-      }
+      playBtn.innerHTML = `<i class="fa-solid fa-play"></i> تشغيل الآن عبر Vidsrc`;
+      const targetId = item.source === 'tmdb' ? item.tmdbId : (item.tmdbId || 550);
+      playBtn.onclick = () => playVidsrc('movie', targetId, null, null, item.title);
     }
 
     updateWatchlistButton(item.uid);
@@ -733,43 +648,12 @@
     document.getElementById('detailsModal').classList.remove('flex');
   }
 
-  function populateLocalSeasons(rawItem) {
-    const select = document.getElementById('seasonSelect');
-    select.innerHTML = '';
-    select.onchange = () => renderLocalEpisodes(rawItem, select.value);
-    Object.keys(rawItem.seasons).forEach(seasonName => {
-      select.innerHTML += `<option value="${seasonName}">${seasonName}</option>`;
-    });
-    renderLocalEpisodes(rawItem, Object.keys(rawItem.seasons)[0]);
-  }
-
-  function renderLocalEpisodes(rawItem, seasonName) {
-    const container = document.getElementById('episodesContainer');
-    container.innerHTML = '';
-    (rawItem.seasons[seasonName] || []).forEach((ep) => {
-      const btn = document.createElement('div');
-      btn.className = 'bg-brandBg hover:bg-brandCard border border-brandBorder p-3 rounded-xl flex items-center justify-between cursor-pointer group transition-all';
-      btn.innerHTML = `
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg bg-brandGold/20 text-brandGold flex items-center justify-center font-bold text-xs">
-            <i class="fa-solid fa-play"></i>
-          </div>
-          <span class="text-xs font-bold text-brandText group-hover:text-brandGold transition-colors">${ep.title}</span>
-        </div>
-        <span class="text-[10px] text-brandMuted">متاح</span>
-      `;
-      btn.addEventListener('click', () => playMediaFile(ep.video, `${rawItem.title} - ${ep.title}`));
-      container.appendChild(btn);
-    });
-  }
-
   function populateTmdbSeasons(item) {
     const select = document.getElementById('seasonSelect');
     select.innerHTML = '';
     const seasons = item.tvSeasons || [];
     if (!seasons.length) {
       select.innerHTML = `<option>لا توجد بيانات مواسم</option>`;
-      document.getElementById('episodesContainer').innerHTML = `<p class="text-xs text-brandMuted col-span-full">لا تتوفر بيانات حلقات لهذا العمل حالياً.</p>`;
       return;
     }
     seasons.forEach(s => { select.innerHTML += `<option value="${s.season_number}">${s.name}</option>`; });
@@ -796,57 +680,36 @@
           </div>
           <span class="text-xs font-bold text-brandText group-hover:text-brandGold transition-colors">الحلقة ${ep.episode_number}: ${ep.name}</span>
         </div>
-        <span class="text-[10px] text-brandGold">تشغيل (VidSrc)</span>
+        <span class="text-[10px] text-brandGold">مشاهدة فورية</span>
       `;
-      btn.addEventListener('click', () => playVidSrc(item, seasonNumber, ep.episode_number, ep.name));
+      btn.addEventListener('click', () => {
+        playVidsrc('tv', item.tvId, seasonNumber, ep.episode_number, `${item.title} - ${ep.name}`);
+      });
       container.appendChild(btn);
     });
   }
 
   /* =========================================================================
-     المشغل الخارجي (VidSrc Embed)
+     مشغل Vidsrc.to
      ========================================================================= */
-  function playVidSrc(item, season = 1, episode = 1, epName = '') {
+  function playVidsrc(type, id, season, episode, title) {
     closeDetailsModal();
+    document.getElementById('playerMovieTitle').innerText = title;
+    
     let embedUrl = '';
-    let title = item.title;
-
-    if (item.type === 'series') {
-      embedUrl = `https://vidsrc.xyz/embed/tv?tmdb=${item.tmdbId}&season=${season}&episode=${episode}`;
-      if (epName) title += ` - الموسم ${season} الحلقة ${episode}`;
+    if (type === 'movie') {
+      embedUrl = `https://vidsrc.to/embed/movie/${id}`;
     } else {
-      embedUrl = `https://vidsrc.xyz/embed/movie?tmdb=${item.tmdbId}`;
+      embedUrl = `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
     }
 
-    document.getElementById('playerMovieTitle').innerText = title;
-    const container = document.getElementById('playerContainer');
-    
-    container.innerHTML = `
-      <iframe src="${embedUrl}" class="w-full h-full border-0 absolute inset-0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true"></iframe>
-    `;
-
-    document.getElementById('playerModal').classList.remove('hidden');
-    document.getElementById('playerModal').classList.add('flex');
-  }
-
-  function playMediaFile(videoUrl, title) {
-    closeDetailsModal();
-    document.getElementById('playerMovieTitle').innerText = title;
-    const container = document.getElementById('playerContainer');
-
-    container.innerHTML = `
-      <video class="w-full h-full absolute inset-0 bg-black" controls autoplay>
-        <source src="${videoUrl}" type="video/mp4">
-        متصفحك لا يدعم تشغيل الفيديو.
-      </video>
-    `;
-
+    document.getElementById('vidsrcIframe').src = embedUrl;
     document.getElementById('playerModal').classList.remove('hidden');
     document.getElementById('playerModal').classList.add('flex');
   }
 
   function closePlayer() {
-    document.getElementById('playerContainer').innerHTML = ''; // إيقاف وإزالة الـ iframe أو الفيديو
+    document.getElementById('vidsrcIframe').src = '';
     document.getElementById('playerModal').classList.add('hidden');
     document.getElementById('playerModal').classList.remove('flex');
   }
@@ -938,9 +801,6 @@
     }, 400);
   }
 
-  /* =========================================================================
-     قائمة المشاهدة
-     ========================================================================= */
   function toggleWatchlist(uid) {
     const idx = state.watchlist.indexOf(uid);
     if (idx === -1) {
@@ -953,7 +813,7 @@
   }
 
   /* =========================================================================
-     تسجيل الدخول بحساب Google
+     تسجيل الدخول Google
      ========================================================================= */
   function base64UrlDecode(str) {
     str = str.replace(/-/g, '+').replace(/_/g, '/');
@@ -977,7 +837,6 @@
       closeLoginModal();
     } catch (err) {
       console.error('تعذّر قراءة بيانات حساب Google:', err);
-      alert('حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى.');
     }
   }
 
@@ -985,9 +844,7 @@
     const warning = document.getElementById('googleConfigWarning');
     if (!isGoogleConfigured()) {
       warning.classList.remove('hidden');
-      warning.innerHTML = `لتفعيل تسجيل الدخول بحساب Google بشكل كامل، أنشئ Client ID من
-        <a class="text-brandGold underline" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console</a>
-        وضعه في <code>CONFIG.GOOGLE_CLIENT_ID</code>، ثم أضف نطاق موقعك ضمن "Authorized JavaScript origins".`;
+      warning.innerHTML = `قم بتعيين معرف العميل (Google Client ID) في كود التكوين لتفعيل تسجيل الدخول.`;
       return;
     }
     if (!window.google || !google.accounts || !google.accounts.id) {
@@ -1068,10 +925,10 @@
     document.getElementById('navWatchlist').addEventListener('click', (e) => { e.preventDefault(); filterWatchlist(); });
     document.getElementById('resetFilterBtn').addEventListener('click', resetFilter);
 
-    document.getElementById('heroDetailsBtn').addEventListener('click', () => openDetailsModal('local-3'));
+    document.getElementById('heroDetailsBtn').addEventListener('click', () => openDetailsModal('local-1'));
     document.getElementById('heroWatchlistBtn').addEventListener('click', () => {
-      toggleWatchlist('local-3');
-      const inList = state.watchlist.includes('local-3');
+      toggleWatchlist('local-1');
+      const inList = state.watchlist.includes('local-1');
       document.getElementById('heroWatchlistBtn').innerHTML = inList
         ? `<i class="fa-solid fa-check"></i> في قائمتي` : `<i class="fa-solid fa-plus"></i> أضف إلى قائمتي`;
     });
@@ -1103,7 +960,7 @@
       }
     });
     [document.getElementById('detailsModal'), document.getElementById('playerModal'), document.getElementById('loginModal')].forEach(modal => {
-      modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); closePlayer(); } });
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'), modal.classList.remove('flex'); });
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
