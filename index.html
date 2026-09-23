@@ -561,17 +561,29 @@
       });
     }
 
+    // [تم التعديل هنا لحل مشكلة عدم عرض وتشغيل الفيديو]
     function playMovie(videoUrl, title) {
       closeDetailsModal();
       document.getElementById('playerMovieTitle').innerText = title;
+      
+      // إظهار نافذة المشغل أولاً
+      const playerModal = document.getElementById('playerModal');
+      playerModal.classList.remove('hidden');
+      playerModal.classList.add('flex');
+
+      // تعيين المصدر للمشغل
       player.source = {
         type: 'video',
         title: title,
         sources: [{ src: videoUrl, type: 'video/mp4' }]
       };
-      document.getElementById('playerModal').classList.remove('hidden');
-      document.getElementById('playerModal').classList.add('flex');
-      player.play();
+
+      // الانتظار قليلاً ثم التشغيل لضمان استقرار المشغل
+      setTimeout(() => {
+        player.play().catch(err => {
+          console.log("تعذر التشغيل التلقائي:", err);
+        });
+      }, 300);
     }
 
     function closePlayer() {
@@ -622,7 +634,7 @@
         const item = mediaDatabase.find(i => i.title === title);
         if (item) grid.innerHTML += createCardHTML(item);
       });
-      window.location.hash = 'catalog';
+      window.location.hash, window.location.hash = 'catalog';
     }
 
     function resetFilter() {
