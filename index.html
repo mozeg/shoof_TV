@@ -36,7 +36,6 @@
             font-family: 'Tajawal', sans-serif;
             overflow-x: hidden;
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -72,7 +71,6 @@
 
     <header class="sticky top-0 z-50 bg-[#0B1A25]/95 backdrop-blur-md border-b border-[#102633]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Logo & Brand -->
             <div class="flex items-center gap-8">
                 <a href="#" onclick="switchTab('home')" class="flex items-center gap-2 group">
                     <div class="w-10 h-10 rounded-xl bg-[#102633] border border-[#E7B86A]/30 flex items-center justify-center text-[#E7B86A] font-black text-2xl shadow-lg transition-transform group-hover:scale-105">
@@ -81,7 +79,6 @@
                     <span class="text-2xl font-black tracking-wider text-[#E7B86A]">شوف <span class="text-xs text-[#98A4AB] font-normal tracking-normal border border-[#102633] px-2 py-0.5 rounded-full bg-[#0E202D]">SHOUF</span></span>
                 </a>
                 
-                <!-- Navigation Links -->
                 <nav class="hidden md:flex items-center gap-2">
                     <button onclick="switchTab('home')" id="nav-home" class="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-[#102633] text-[#E7B86A] border border-[#E7B86A]/20">الرئيسية</button>
                     <button onclick="switchTab('movies')" id="nav-movies" class="px-4 py-2 rounded-lg text-sm font-medium text-[#98A4AB] hover:text-[#F4F1E9] hover:bg-[#102633]/50 transition-all">الأفلام</button>
@@ -92,12 +89,11 @@
                 </nav>
             </div>
 
-            <!-- Search Bar & Mobile Menu Toggle -->
             <div class="flex items-center gap-4">
                 <div class="relative w-48 sm:w-72">
                     <input type="text" id="searchInput" placeholder="ابحث عن فيلم، مسلسل..." 
                         class="w-full bg-[#102633] text-[#F4F1E9] placeholder-[#98A4AB] text-sm rounded-xl px-4 py-2.5 pr-10 border border-[#0E202D] focus:outline-none focus:border-[#E7B86A] transition-all">
-                    <i class="fa-solid fa-magnifying glass absolute right-3.5 top-3 text-[#98A4AB]"></i>
+                    <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3 text-[#98A4AB]"></i>
                 </div>
                 <button onclick="toggleMobileMenu()" class="md:hidden text-[#F4F1E9] bg-[#102633] p-2.5 rounded-xl border border-[#0E202D]">
                     <i class="fa-solid fa-bars"></i>
@@ -105,7 +101,6 @@
             </div>
         </div>
 
-        <!-- Mobile Navigation Drawer -->
         <div id="mobileMenu" class="hidden md:hidden bg-[#0B1A25] border-b border-[#102633] px-4 py-3 space-y-2">
             <button onclick="switchTab('home'); toggleMobileMenu();" class="block w-full text-right px-4 py-2 rounded-lg text-sm font-medium text-[#E7B86A] bg-[#102633]">الرئيسية</button>
             <button onclick="switchTab('movies'); toggleMobileMenu();" class="block w-full text-right px-4 py-2 rounded-lg text-sm font-medium text-[#98A4AB] hover:bg-[#102633]">الأفلام</button>
@@ -115,9 +110,7 @@
     </header>
 
     <main class="flex-grow">
-        <!-- Home Tab Content -->
         <div id="tab-home" class="tab-content space-y-12 pb-16">
-            <!-- Hero Banner Section -->
             <section id="heroSection" class="relative min-h-[500px] sm:min-h-[600px] flex items-center justify-center overflow-hidden bg-[#0B1A25]">
                 <div class="absolute inset-0 z-0 bg-cover bg-center opacity-40 transition-all duration-1000" id="heroBg"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-[#07131C] via-[#07131C]/60 to-transparent z-10"></div>
@@ -126,7 +119,7 @@
                     <div id="heroContent" class="max-w-2xl space-y-4">
                         <span class="inline-block bg-[#102633] text-[#E7B86A] text-xs font-bold px-3 py-1 rounded-md border border-[#E7B86A]/30">عمل بارز اليوم</span>
                         <h1 id="heroTitle" class="text-3xl sm:text-5xl font-black text-[#F4F1E9] leading-tight">جاري التحميل...</h1>
-                        <p id="heroOverview" class="text-sm sm:text-base text-[#98A4AB] line-clamp-3">يرجى الانتظار بينما نقوم بجلب أحدث الأفلام والمسلسلات من قاعدة البيانات السينمائية.</p>
+                        <p id="heroOverview" class="text-sm sm:text-base text-[#98A4AB] line-clamp-3">يرجى الانتظار بينما نقوم بجلب أحدث الأفلام والمسلسلات...</p>
                         <div class="flex items-center gap-4 pt-2">
                             <button id="heroWatchBtn" class="bg-[#E7B86A] hover:bg-[#C9964D] text-[#07131C] font-bold px-6 py-3 rounded-xl transition-all flex items-center gap-2 shadow-lg glow-gold">
                                 <i class="fa-solid fa-play"></i> مشاهدة الآن
@@ -139,7 +132,6 @@
                 </div>
             </section>
 
-            <!-- Trending Section -->
             <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
                 <div class="flex items-center justify-between border-b border-[#102633] pb-4">
                     <h2 class="text-xl sm:text-2xl font-bold text-[#F4F1E9] flex items-center gap-3">
@@ -152,12 +144,10 @@
                     </div>
                 </div>
                 <div id="trendingGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-                    <!-- Cards will be injected via JS -->
                     <div class="col-span-full text-center py-12 text-[#98A4AB]">جاري التحميل...</div>
                 </div>
             </section>
 
-            <!-- Top Rated Section -->
             <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
                 <div class="flex items-center justify-between border-b border-[#102633] pb-4">
                     <h2 class="text-xl sm:text-2xl font-bold text-[#F4F1E9] flex items-center gap-3">
@@ -165,12 +155,10 @@
                     </h2>
                 </div>
                 <div id="topRatedGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-                    <!-- Cards will be injected via JS -->
                 </div>
             </section>
         </div>
 
-        <!-- Movies Tab Content -->
         <div id="tab-movies" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#102633] pb-4">
                 <h1 class="text-2xl font-bold text-[#F4F1E9] flex items-center gap-3">
@@ -190,11 +178,9 @@
                 </div>
             </div>
             <div id="moviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-                <!-- Injected via JS -->
             </div>
         </div>
 
-        <!-- TV Shows Tab Content -->
         <div id="tab-tv" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#102633] pb-4">
                 <h1 class="text-2xl font-bold text-[#F4F1E9] flex items-center gap-3">
@@ -212,11 +198,9 @@
                 </div>
             </div>
             <div id="tvGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-                <!-- Injected via JS -->
             </div>
         </div>
 
-        <!-- Favorites Tab Content -->
         <div id="tab-favorites" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             <div class="border-b border-[#102633] pb-4">
                 <h1 class="text-2xl font-bold text-[#F4F1E9] flex items-center gap-3">
@@ -224,11 +208,9 @@
                 </h1>
             </div>
             <div id="favoritesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-                <!-- Injected via JS -->
             </div>
         </div>
 
-        <!-- Search Results View -->
         <div id="tab-search" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
             <div class="border-b border-[#102633] pb-4 flex items-center justify-between">
                 <h1 class="text-2xl font-bold text-[#F4F1E9] flex items-center gap-3">
@@ -237,11 +219,9 @@
                 <button onclick="switchTab('home')" class="text-xs text-[#98A4AB] hover:text-[#F4F1E9] bg-[#102633] px-3 py-1.5 rounded-lg border border-[#0E202D]">العودة للرئيسية</button>
             </div>
             <div id="searchGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-                <!-- Injected via JS -->
             </div>
         </div>
 
-        <!-- Details Modal / View -->
         <div id="detailsModal" class="fixed inset-0 z-50 bg-[#07131C]/90 backdrop-blur-md hidden overflow-y-auto">
             <div class="min-h-screen px-4 py-8 flex items-center justify-center">
                 <div class="bg-[#0B1A25] border border-[#102633] rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl relative">
@@ -250,13 +230,11 @@
                     </button>
                     
                     <div id="detailsContent">
-                        <!-- Dynamic details populated via JS -->
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Watch Player Modal -->
         <div id="playerModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex flex-col">
             <div class="bg-[#0B1A25] border-b border-[#102633] px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -291,7 +269,7 @@
     </footer>
 
     <script>
-        const API_KEY = 'c1532aa276cf64009b81018359068c';
+        const API_KEY = 'c1532aa2726cf64009b81018359068c';
         const BASE_URL = 'https://api.themoviedb.org/3';
         const IMG_URL = 'https://image.tmdb.org/t/p/w500';
         const BACKDROP_URL = 'https://image.tmdb.org/t/p/original';
@@ -300,19 +278,15 @@
         let currentItemDetails = null;
         let currentTVData = null;
 
-        // Initialize App on Load
         window.addEventListener('DOMContentLoaded', () => {
             fetchHomeData();
             setupSearchListener();
-            loadFavorites();
         });
 
-        // Tab Switching Logic
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
-            // Update nav active states
             ['home', 'movies', 'tv', 'favorites'].forEach(t => {
                 const btn = document.getElementById(`nav-${t}`);
                 if(btn) {
@@ -336,21 +310,16 @@
             menu.classList.toggle('hidden');
         }
 
-        // Fetch Data for Home View
         async function fetchHomeData() {
             try {
-                // Fetch Hero (Trending Movie/TV)
                 const heroRes = await fetch(`${BASE_URL}/trending/all/day?api_key=${API_KEY}&language=ar-AR`);
                 const heroData = await heroRes.json();
                 if(heroData.results && heroData.results.length > 0) {
-                    const heroItem = heroData.results[0];
-                    setupHero(heroItem);
+                    setupHero(heroData.results[0]);
                 }
 
-                // Fetch Trending Grid
                 await filterTrending('all');
 
-                // Fetch Top Rated
                 const topRes = await fetch(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=ar-AR`);
                 const topData = await topRes.json();
                 renderGrid(topData.results.slice(0, 10), 'topRatedGrid');
@@ -367,15 +336,11 @@
             const type = item.media_type || (item.title ? 'movie' : 'tv');
 
             document.getElementById('heroBg').style.backgroundImage = `url('${backdrop}')`;
-            const heroTitleEl = document.getElementById('heroTitle');
-            if(heroTitleEl) heroTitleEl.innerText = title;
-            const heroOverviewEl = document.getElementById('heroOverview');
-            if(heroOverviewEl) heroOverviewEl.innerText = overview;
+            document.getElementById('heroTitle').innerText = title;
+            document.getElementById('heroOverview').innerText = overview;
 
-            const watchBtn = document.getElementById('heroWatchBtn');
-            if(watchBtn) watchBtn.onclick = () => openPlayer(item.id, type, title);
-            const detailsBtn = document.getElementById('heroDetailsBtn');
-            if(detailsBtn) detailsBtn.onclick = () => openDetailsModal(item.id, type);
+            document.getElementById('heroWatchBtn').onclick = () => openPlayer(item.id, type, title);
+            document.getElementById('heroDetailsBtn').onclick = () => openDetailsModal(item.id, type);
         }
 
         async function filterTrending(type) {
@@ -404,7 +369,6 @@
             }
         }
 
-        // Render Cards Grid
         function renderGrid(items, elementId) {
             const container = document.getElementById(elementId);
             if(!container) return;
@@ -446,7 +410,6 @@
             }).join('');
         }
 
-        // Movies Page Fetch & Genres
         async function fetchMoviesPage() {
             try {
                 const res = await fetch(`${BASE_URL}/movie/popular?api_key=${API_KEY}&language=ar-AR`);
@@ -472,7 +435,6 @@
             }
         }
 
-        // TV Page Fetch & Genres
         async function fetchTvPage() {
             try {
                 const res = await fetch(`${BASE_URL}/tv/popular?api_key=${API_KEY}&language=ar-AR`);
@@ -498,7 +460,6 @@
             }
         }
 
-        // Search Functionality
         function setupSearchListener() {
             const input = document.getElementById('searchInput');
             let timeout = null;
@@ -526,7 +487,6 @@
             }
         }
 
-        // Details Modal Logic
         async function openDetailsModal(id, type) {
             try {
                 const res = await fetch(`${BASE_URL}/${type}/${id}?api_key=${API_KEY}&language=ar-AR&append_to_response=credits`);
@@ -598,8 +558,7 @@
             document.getElementById('detailsModal').classList.add('hidden');
         }
 
-        // Vidsrc Player Integration
-        async function openPlayer(id, type, title) {
+        function openPlayer(id, type, title) {
             closeDetails();
             const playerModal = document.getElementById('playerModal');
             const iframe = document.getElementById('videoIframe');
@@ -611,43 +570,41 @@
 
             if (type === 'movie') {
                 episodeSelectors.classList.add('hidden');
-                iframe.src = `https://vidsrc.to/embed/movie/${id}`;
+                iframe.src = `https://vidsrc.xyz/embed/movie?tmdb=${id}`;
             } else {
                 episodeSelectors.classList.remove('hidden');
-                // Fetch TV details for seasons & episodes
-                try {
-                    const res = await fetch(`${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=ar-AR`);
-                    currentTVData = await res.json();
-                    
-                    const seasonSelect = document.getElementById('seasonSelect');
-                    seasonSelect.innerHTML = currentTVData.seasons
-                        .filter(s => s.season_number > 0)
-                        .map(s => `<option value="${s.season_number}">الموسم ${s.season_number}</option>`).join('');
+                fetch(`${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=ar-AR`)
+                    .then(res => res.json())
+                    .then(tvData => {
+                        currentTVData = tvData;
+                        const seasonSelect = document.getElementById('seasonSelect');
+                        seasonSelect.innerHTML = tvData.seasons
+                            .filter(s => s.season_number > 0)
+                            .map(s => `<option value="${s.season_number}">الموسم ${s.season_number}</option>`).join('');
 
-                    if(currentTVData.seasons.length > 0) {
-                        loadEpisodesForSeason(id, currentTVData.seasons[0].season_number);
-                    }
-                } catch(err) {
-                    console.error(err);
-                    iframe.src = `https://vidsrc.to/embed/tv/${id}/1/1`;
-                }
+                        if(tvData.seasons.length > 0) {
+                            loadEpisodesForSeason(id, tvData.seasons[0].season_number);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        iframe.src = `https://vidsrc.xyz/embed/tv?tmdb=${id}&season=1&episode=1`;
+                    });
             }
         }
 
-        async function loadEpisodesForSeason(tvId, seasonNumber) {
-            try {
-                const res = await fetch(`${BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${API_KEY}&language=ar-AR`);
-                const seasonData = await res.json();
-                
-                const episodeSelect = document.getElementById('episodeSelect');
-                episodeSelect.innerHTML = seasonData.episodes.map(ep => `<option value="${ep.episode_number}">الحلقة ${ep.episode_number}: ${ep.name}</option>`).join('');
+        function loadEpisodesForSeason(tvId, seasonNumber) {
+            fetch(`${BASE_URL}/tv/${tvId}/season/${seasonNumber}?api_key=${API_KEY}&language=ar-AR`)
+                .then(res => res.json())
+                .then(seasonData => {
+                    const episodeSelect = document.getElementById('episodeSelect');
+                    episodeSelect.innerHTML = seasonData.episodes.map(ep => `<option value="${ep.episode_number}">الحلقة ${ep.episode_number}: ${ep.name}</option>`).join('');
 
-                if(seasonData.episodes.length > 0) {
-                    document.getElementById('videoIframe').src = `https://vidsrc.to/embed/tv/${tvId}/${seasonNumber}/${seasonData.episodes[0].episode_number}`;
-                }
-            } catch(err) {
-                console.error(err);
-            }
+                    if(seasonData.episodes.length > 0) {
+                        document.getElementById('videoIframe').src = `https://vidsrc.xyz/embed/tv?tmdb=${tvId}&season=${seasonNumber}&episode=${seasonData.episodes[0].episode_number}`;
+                    }
+                })
+                .catch(err => console.error(err));
         }
 
         function onSeasonChange() {
@@ -661,7 +618,7 @@
             const seasonNum = document.getElementById('seasonSelect').value;
             const episodeNum = document.getElementById('episodeSelect').value;
             if(currentItemDetails) {
-                document.getElementById('videoIframe').src = `https://vidsrc.to/embed/tv/${currentItemDetails.id}/${seasonNum}/${episodeNum}`;
+                document.getElementById('videoIframe').src = `https://vidsrc.xyz/embed/tv?tmdb=${currentItemDetails.id}&season=${seasonNum}&episode=${episodeNum}`;
             }
         }
 
@@ -670,7 +627,6 @@
             document.getElementById('videoIframe').src = '';
         }
 
-        // Favorites System (LocalStorage)
         function getFavorites() {
             const favs = localStorage.getItem('shouf_favorites');
             return favs ? JSON.parse(favs) : [];
@@ -711,11 +667,7 @@
             }
         }
 
-        function loadFavorites() {
-            // Initialization helper
-        }
-
-        async function renderFavorites() {
+        function renderFavorites() {
             const favs = getFavorites();
             renderGrid(favs, 'favoritesGrid');
         }
