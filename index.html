@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شوف | SHOUF - منصة الأفلام والمسلسلات</title>
+    <title>شوف | SHOUF - vidsrc.to</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -33,28 +33,12 @@
             font-family: system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
         }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0B1A25;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #102633;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #E7B86A;
-        }
-        .movie-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .movie-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 10px 25px -5px rgba(231, 184, 106, 0.15);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0B1A25; }
+        ::-webkit-scrollbar-thumb { background: #102633; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #E7B86A; }
+        .movie-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .movie-card:hover { transform: translateY(-6px); box-shadow: 0 10px 25px -5px rgba(231, 184, 106, 0.15); }
     </style>
 </head>
 <body class="bg-mainBg text-mainText min-h-screen flex flex-col selection:bg-accentGold selection:text-mainBg">
@@ -62,8 +46,6 @@
     <!-- Header / Navbar -->
     <header class="sticky top-0 z-50 bg-secBg1/95 backdrop-blur-md border-b border-secBg2">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            
-            <!-- Logo & Nav Links -->
             <div class="flex items-center space-x-8 space-x-reverse">
                 <a href="#" onclick="switchTab('home')" class="flex items-center space-x-2 space-x-reverse group">
                     <div class="bg-accentGold text-mainBg font-black text-xl px-3 py-1.5 rounded-lg shadow-lg group-hover:bg-extraGold transition">
@@ -82,7 +64,6 @@
                 </nav>
             </div>
 
-            <!-- Search Bar -->
             <div class="flex items-center space-x-4 space-x-reverse">
                 <div class="relative w-48 sm:w-64 md:w-80">
                     <input type="text" id="search-input" placeholder="ابحث عن فيلم، مسلسل..." 
@@ -90,7 +71,6 @@
                     <i class="fa-solid fa-search absolute right-3.5 top-3 text-secText"></i>
                 </div>
             </div>
-
         </div>
     </header>
 
@@ -112,10 +92,8 @@
 
     <!-- Main Content -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full mb-16 md:mb-0">
-
         <!-- HOME TAB -->
         <div id="tab-home" class="space-y-10">
-            <!-- Hero Featured Banner -->
             <div id="hero-banner" class="relative rounded-2xl overflow-hidden bg-cardBg border border-secBg2 shadow-2xl min-h-[420px] flex items-end">
                 <div class="absolute inset-0 bg-gradient-to-t from-mainBg via-mainBg/60 to-transparent z-10"></div>
                 <div id="hero-bg-img" class="absolute inset-0 bg-cover bg-center filter brightness-50"></div>
@@ -127,14 +105,10 @@
                         <button id="hero-watch-btn" class="bg-accentGold text-mainBg hover:bg-extraGold font-bold px-6 py-3 rounded-xl flex items-center shadow-lg transition">
                             <i class="fa-solid fa-play ml-2"></i> مشاهدة الآن
                         </button>
-                        <button id="hero-info-btn" class="bg-secBg2 text-mainText hover:bg-cardBg border border-secBg1 font-semibold px-6 py-3 rounded-xl flex items-center transition">
-                            <i class="fa-solid fa-circle-info ml-2"></i> التفاصيل
-                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Trending Section -->
             <section class="space-y-4">
                 <div class="flex items-center justify-between border-r-4 border-accentGold pr-3">
                     <h2 class="text-xl sm:text-2xl font-bold tracking-wide">الرائج حالياً</h2>
@@ -149,7 +123,6 @@
                 </div>
             </section>
 
-            <!-- Top Rated Section -->
             <section class="space-y-4">
                 <div class="flex items-center justify-between border-r-4 border-accentGold pr-3">
                     <h2 class="text-xl sm:text-2xl font-bold tracking-wide">الأعلى تقييماً</h2>
@@ -160,36 +133,27 @@
 
         <!-- MOVIES TAB -->
         <div id="tab-movies" class="hidden space-y-6">
-            <div class="border-r-4 border-accentGold pr-3">
-                <h2 class="text-2xl font-bold">أحدث الأفلام السينمائية</h2>
-            </div>
+            <div class="border-r-4 border-accentGold pr-3"><h2 class="text-2xl font-bold">أحدث الأفلام السينمائية</h2></div>
             <div id="movies-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
         </div>
 
         <!-- TV SHOWS TAB -->
         <div id="tab-tv" class="hidden space-y-6">
-            <div class="border-r-4 border-accentGold pr-3">
-                <h2 class="text-2xl font-bold">أشهر المسلسلات التلفزيونية</h2>
-            </div>
+            <div class="border-r-4 border-accentGold pr-3"><h2 class="text-2xl font-bold">أشهر المسلسلات التلفزيونية</h2></div>
             <div id="tv-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
         </div>
 
         <!-- FAVORITES TAB -->
         <div id="tab-favorites" class="hidden space-y-6">
-            <div class="border-r-4 border-accentGold pr-3">
-                <h2 class="text-2xl font-bold">قائمة المفضلة</h2>
-            </div>
+            <div class="border-r-4 border-accentGold pr-3"><h2 class="text-2xl font-bold">قائمة المفضلة</h2></div>
             <div id="favorites-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
         </div>
 
         <!-- SEARCH RESULTS TAB -->
         <div id="tab-search" class="hidden space-y-6">
-            <div class="border-r-4 border-accentGold pr-3">
-                <h2 id="search-results-title" class="text-2xl font-bold">نتائج البحث</h2>
-            </div>
+            <div class="border-r-4 border-accentGold pr-3"><h2 id="search-results-title" class="text-2xl font-bold">نتائج البحث</h2></div>
             <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
         </div>
-
     </main>
 
     <!-- Watch / Player Modal -->
@@ -200,18 +164,18 @@
                 <span class="w-2 h-2 rounded-full bg-accentGold inline-block"></span>
             </div>
             
-            <!-- TV Show Selectors -->
             <div id="tv-controls" class="hidden flex items-center space-x-2 space-x-reverse">
                 <select id="season-select" onchange="changeSeason()" class="bg-secBg2 text-mainText border border-secBg1 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-accentGold"></select>
                 <select id="episode-select" onchange="changeEpisode()" class="bg-secBg2 text-mainText border border-secBg1 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:border-accentGold"></select>
             </div>
 
             <!-- Server Selector -->
-            <div class="flex items-center space-x-2 space-x-reverse text-xs">
+            <div class="flex items-center space-x-2 space-x-reverse text-xs overflow-x-auto py-1">
                 <span class="text-secText hidden sm:inline">السيرفر:</span>
-                <button onclick="switchServer(1)" id="srv-btn-1" class="px-2.5 py-1 rounded bg-accentGold text-mainBg font-semibold">سيرفر 1 (Vidsrc.me)</button>
-                <button onclick="switchServer(2)" id="srv-btn-2" class="px-2.5 py-1 rounded bg-secBg2 text-secText hover:text-mainText">سيرفر 2 (Vidsrc.icu)</button>
-                <button onclick="switchServer(3)" id="srv-btn-3" class="px-2.5 py-1 rounded bg-secBg2 text-secText hover:text-mainText">سيرفر 3 (2embed)</button>
+                <button onclick="switchServer(1)" id="srv-btn-1" class="px-2.5 py-1 rounded bg-accentGold text-mainBg font-semibold">vidsrc.to (الرئيسي)</button>
+                <button onclick="switchServer(2)" id="srv-btn-2" class="px-2.5 py-1 rounded bg-secBg2 text-secText hover:text-mainText">vidsrc.me</button>
+                <button onclick="switchServer(3)" id="srv-btn-3" class="px-2.5 py-1 rounded bg-secBg2 text-secText hover:text-mainText">vidsrc.in</button>
+                <button onclick="switchServer(4)" id="srv-btn-4" class="px-2.5 py-1 rounded bg-secBg2 text-secText hover:text-mainText">vidsrc.pm</button>
             </div>
 
             <button onclick="closePlayer()" class="bg-secBg2 hover:bg-red-600/80 text-mainText text-sm px-4 py-2 rounded-xl transition flex items-center">
@@ -219,25 +183,21 @@
             </button>
         </div>
 
-        <!-- Video Frame Area -->
         <div class="flex-grow relative flex flex-col items-center justify-center bg-black p-2 sm:p-4">
             <iframe id="video-iframe" class="w-full h-full max-h-[80vh] rounded-xl border border-secBg2" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
             
-            <!-- External Direct Player Button for strict iframe environments -->
             <div class="mt-3 flex items-center gap-3">
                 <a id="external-link" href="#" target="_blank" class="bg-accentGold text-mainBg font-bold text-xs px-4 py-2 rounded-lg hover:bg-extraGold transition flex items-center shadow">
-                    <i class="fa-solid fa-external-link-alt ml-1.5"></i> فتح المشغل في نافذة جديدة (في حال عدم التحميل)
+                    <i class="fa-solid fa-external-link-alt ml-1.5"></i> فتح المشغل في نافذة جديدة
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="bg-secBg1 border-t border-secBg2 py-6 text-center text-secText text-sm">
         <p>جميع الحقوق محفوظة منصة <span class="text-accentGold font-bold">شوف</span> © 2026</p>
     </footer>
 
-    <!-- JavaScript Logic -->
     <script>
         const TMDB_API_KEY = 'c1532aa2e726cf64009b81018359068c';
         const IMG_URL = 'https://image.tmdb.org/t/p/w500';
@@ -250,14 +210,11 @@
         let activeServer = 1;
         let favorites = JSON.parse(localStorage.getItem('shouf_favs') || '[]');
 
-        // Local Fallback Data if network API is blocked
         const fallbackData = {
             trending: [
                 { id: 1396, title: "Breaking Bad", name: "Breaking Bad", media_type: "tv", poster_path: "/ztkUQFLlC19CCMYHWcO1zbb5OLr.jpg", backdrop_path: "/tsRy6DDWpcrIDqvwni7nIjSxkYZ.jpg", vote_average: 9.5, overview: "معلم كيمياء يُشخّص بالسرطان ويدخل عالم الجريمة لتأمين عائلته." },
-                { id: 1399, title: "Game of Thrones", name: "Game of Thrones", media_type: "tv", poster_path: "/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg", backdrop_path: "/suopoADq0k8YZr4dQXcU6pToj6s.jpg", vote_average: 9.3, overview: "صراع العائلات النبيلة للسيطرة على العرش الحديدي." },
                 { id: 27205, title: "Inception", name: "Inception", media_type: "movie", poster_path: "/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg", backdrop_path: "/s3TBrRGB137ufOCpPDhzY5L31QL.jpg", vote_average: 8.8, overview: "سرقة الأسرار عبر اختراق الأحلام والعقول." },
-                { id: 157336, title: "Interstellar", name: "Interstellar", media_type: "movie", poster_path: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", backdrop_path: "/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg", vote_average: 8.7, overview: "رحلة فضائية عبر ثقب دودي للبحث عن كوكب بديل للبشرية." },
-                { id: 66732, title: "Stranger Things", name: "Stranger Things", media_type: "tv", poster_path: "/49WJfeN0moxb9IPfGn8AIqMGskD.jpg", backdrop_path: "/56v2KjBlU4XaOv9rVYEQypROD7P.jpg", vote_average: 8.6, overview: "أحداث غامضة وقوى خارقة في بلدة صغيرة." }
+                { id: 157336, title: "Interstellar", name: "Interstellar", media_type: "movie", poster_path: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg", backdrop_path: "/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg", vote_average: 8.7, overview: "رحلة فضائية عبر ثقب دودي للبحث عن كوكب بديل للبشرية." }
             ]
         };
 
@@ -270,16 +227,12 @@
             ['home', 'movies', 'tv', 'favorites', 'search'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
                 const navBtn = document.getElementById(`nav-${t}`);
-                if(navBtn) {
-                    navBtn.className = "px-4 py-2 rounded-lg text-secText hover:text-mainText hover:bg-secBg2 transition";
-                }
+                if(navBtn) navBtn.className = "px-4 py-2 rounded-lg text-secText hover:text-mainText hover:bg-secBg2 transition";
             });
 
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             const activeNav = document.getElementById(`nav-${tabId}`);
-            if(activeNav) {
-                activeNav.className = "px-4 py-2 rounded-lg bg-accentGold text-mainBg font-semibold transition";
-            }
+            if(activeNav) activeNav.className = "px-4 py-2 rounded-lg bg-accentGold text-mainBg font-semibold transition";
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -311,12 +264,9 @@
             
             document.getElementById('hero-title').innerText = title;
             document.getElementById('hero-overview').innerText = overview;
-            if(backdrop) {
-                document.getElementById('hero-bg-img').style.backgroundImage = `url(${backdrop})`;
-            }
+            if(backdrop) document.getElementById('hero-bg-img').style.backgroundImage = `url(${backdrop})`;
             
             document.getElementById('hero-watch-btn').onclick = () => openPlayer(item.id, item.media_type || 'movie', title);
-            document.getElementById('hero-info-btn').onclick = () => openPlayer(item.id, item.media_type || 'movie', title);
         }
 
         async function loadCategory(type, gridId) {
@@ -394,32 +344,21 @@
 
         function toggleFavorite(item) {
             const idx = favorites.findIndex(f => f.id === item.id);
-            if(idx > -1) {
-                favorites.splice(idx, 1);
-            } else {
-                favorites.push(item);
-            }
-            localStorage.setItem('shouf_favs', JSON.stringify(favorites));
+            if(idx > -1) favorites.splice(idx, 1);
+            else favorites.push(item);
             
-            if(!document.getElementById('tab-favorites').classList.contains('hidden')) {
-                renderFavorites();
-            } else {
-                fetchHomeData();
-            }
+            localStorage.setItem('shouf_favs', JSON.stringify(favorites));
+            if(!document.getElementById('tab-favorites').classList.contains('hidden')) renderFavorites();
+            else fetchHomeData();
         }
 
-        function renderFavorites() {
-            renderGrid(favorites, 'favorites-grid');
-        }
+        function renderFavorites() { renderGrid(favorites, 'favorites-grid'); }
 
         function filterTrending(type) {
             ['all', 'movie', 'tv'].forEach(t => {
                 const btn = document.getElementById(`trend-${t}`);
-                if(t === type) {
-                    btn.className = "px-3 py-1.5 rounded-lg bg-accentGold text-mainBg font-medium transition";
-                } else {
-                    btn.className = "px-3 py-1.5 rounded-lg bg-secBg2 text-secText hover:text-mainText transition";
-                }
+                if(t === type) btn.className = "px-3 py-1.5 rounded-lg bg-accentGold text-mainBg font-medium transition";
+                else btn.className = "px-3 py-1.5 rounded-lg bg-secBg2 text-secText hover:text-mainText transition";
             });
 
             if(type === 'all') fetchHomeData();
@@ -453,16 +392,19 @@
             document.body.style.overflow = 'auto';
         }
 
+        // استخدام صياغة vidsrc.to الرسمية المحدثة
         function updateIframeSource() {
             let url = '';
             if(currentMediaType === 'movie') {
-                if(activeServer === 1) url = `https://vidsrc.me/embed/movie?tmdb=${currentMediaId}`;
-                else if(activeServer === 2) url = `https://vidsrc.icu/embed/movie/${currentMediaId}`;
-                else url = `https://2embed.cc/embed/${currentMediaId}`;
+                if(activeServer === 1) url = `https://vidsrc.to/embed/movie/${currentMediaId}`;
+                else if(activeServer === 2) url = `https://vidsrc.me/embed/movie/${currentMediaId}`;
+                else if(activeServer === 3) url = `https://vidsrc.in/embed/movie/${currentMediaId}`;
+                else url = `https://vidsrc.pm/embed/movie/${currentMediaId}`;
             } else {
-                if(activeServer === 1) url = `https://vidsrc.me/embed/tv?tmdb=${currentMediaId}&season=${currentSeason}&episode=${currentEpisode}`;
-                else if(activeServer === 2) url = `https://vidsrc.icu/embed/tv/${currentMediaId}/${currentSeason}/${currentEpisode}`;
-                else url = `https://2embed.cc/embed/tv/${currentMediaId}&s=${currentSeason}&e=${currentEpisode}`;
+                if(activeServer === 1) url = `https://vidsrc.to/embed/tv/${currentMediaId}/${currentSeason}/${currentEpisode}`;
+                else if(activeServer === 2) url = `https://vidsrc.me/embed/tv/${currentMediaId}/${currentSeason}/${currentEpisode}`;
+                else if(activeServer === 3) url = `https://vidsrc.in/embed/tv/${currentMediaId}/${currentSeason}/${currentEpisode}`;
+                else url = `https://vidsrc.pm/embed/tv/${currentMediaId}/${currentSeason}/${currentEpisode}`;
             }
 
             document.getElementById('video-iframe').src = url;
@@ -471,12 +413,11 @@
 
         function switchServer(srvNum) {
             activeServer = srvNum;
-            for(let i=1; i<=3; i++) {
+            for(let i=1; i<=4; i++) {
                 const btn = document.getElementById(`srv-btn-${i}`);
-                if(i === srvNum) {
-                    btn.className = "px-2.5 py-1 rounded bg-accentGold text-mainBg font-semibold";
-                } else {
-                    btn.className = "px-2.5 py-1 rounded bg-secBg2 text-secText hover:text-mainText";
+                if(btn) {
+                    if(i === srvNum) btn.className = "px-2.5 py-1 rounded bg-accentGold text-mainBg font-semibold";
+                    else btn.className = "px-2.5 py-1 rounded bg-secBg2 text-secText hover:text-mainText";
                 }
             }
             updateIframeSource();
