@@ -48,21 +48,12 @@
       font-family: 'Cairo', sans-serif;
       overflow-x: hidden;
     }
-    
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .hero-gradient {
       background: linear-gradient(180deg, rgba(7, 19, 28, 0.4) 0%, rgba(7, 19, 28, 0.95) 85%, #07131C 100%),
                   linear-gradient(90deg, rgba(7, 19, 28, 0.9) 0%, rgba(7, 19, 28, 0.3) 50%, rgba(7, 19, 28, 0.8) 100%);
     }
-
-    /* Custom Plyr Theme Accent */
     :root {
       --plyr-color-main: #E7B86A;
       --plyr-video-control-color: #F4F1E9;
@@ -77,50 +68,30 @@
       
       <!-- Logo & Navigation -->
       <div class="flex items-center gap-8">
-        <!-- SVG Custom Logo Matching Attached Design -->
-        <a href="#" class="flex items-center group">
-          <svg width="110" height="42" viewBox="0 0 120 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Modern SVG Logo -->
+        <a href="#" onclick="resetFilter()" class="flex items-center group">
+          <svg width="120" height="40" viewBox="0 0 140 45" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#FCE8B2"/>
+              <linearGradient id="modernGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FFF2CC"/>
                 <stop offset="50%" stop-color="#E7B86A"/>
-                <stop offset="100%" stop-color="#C9964D"/>
-              </linearGradient>
-              <linearGradient id="silverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#D1D8DC"/>
-                <stop offset="100%" stop-color="#788896"/>
+                <stop offset="100%" stop-color="#B38235"/>
               </linearGradient>
             </defs>
-
-            <!-- 'شو' Part (Gold) -->
-            <g fill="url(#goldGradient)">
-              <!-- Dots for ش -->
-              <circle cx="106" cy="12" r="3.5" />
-              <circle cx="96" cy="10" r="3.5" />
-              <circle cx="86" cy="12" r="3.5" />
-              
-              <!-- Letter Body -->
-              <path d="M112 26 C112 21, 106 21, 104 26 C102 21, 96 21, 94 26 C92 21, 86 21, 84 26 L84 32 C84 38, 54 38, 54 28 L54 24 C54 20, 44 20, 44 26 L44 32 C44 42, 82 42, 84 42 C86 42, 112 42, 112 32 Z" />
-            </g>
-
-            <!-- 'ف' Part (Silver) -->
-            <g fill="url(#silverGradient)">
-              <!-- Dot for ف -->
-              <circle cx="28" cy="12" r="3.5" />
-              <!-- Loop and Loop Body -->
-              <path d="M38 28 C38 20, 20 20, 20 28 C20 31, 26 31, 28 28 C28 26, 30 25, 32 25 C34 25, 34 28, 32 30 L16 30 C8 30, 8 40, 24 40 L38 40 C46 40, 46 32, 38 28 Z" />
-            </g>
+            <path d="M15 32 C15 20, 32 12, 45 22 C52 28, 58 32, 68 25 C78 18, 88 12, 102 24 C115 35, 125 22, 125 15" stroke="url(#modernGold)" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+            <text x="36" y="33" fill="url(#modernGold)" font-family="Cairo, sans-serif" font-weight="900" font-size="24" letter-spacing="1">شوف</text>
+            <circle cx="112" cy="12" r="3.5" fill="#E7B86A"/>
           </svg>
         </a>
 
         <!-- Desktop Navigation -->
         <nav class="hidden md:flex items-center gap-6 text-sm font-semibold">
-          <a href="#" class="text-brandGold border-b-2 border-brandGold pb-1">الرئيسية</a>
-          <a href="#trending" class="text-brandMuted hover:text-brandText transition-colors">أفلام</a>
-          <a href="#top-rated" class="text-brandMuted hover:text-brandText transition-colors">مسلسلات</a>
+          <a href="#" onclick="resetFilter()" class="text-brandGold border-b-2 border-brandGold pb-1">الرئيسية</a>
+          <a href="#catalog" onclick="filterByCategory('أفلام')" class="text-brandMuted hover:text-brandText transition-colors">أفلام</a>
+          <a href="#catalog" onclick="filterByCategory('مسلسلات')" class="text-brandMuted hover:text-brandText transition-colors">مسلسلات</a>
           <a href="#categories" class="text-brandMuted hover:text-brandText transition-colors">تصنيفات</a>
-          <a href="#iraqi" class="text-brandMuted hover:text-brandText transition-colors">أفلام عراقية</a>
-          <a href="#watchlist" class="text-brandMuted hover:text-brandText transition-colors">قائمتي</a>
+          <a href="#catalog" onclick="filterByCategory('أفلام عراقية')" class="text-brandMuted hover:text-brandText transition-colors">أفلام عراقية</a>
+          <a href="#catalog" onclick="filterWatchlist()" class="text-brandMuted hover:text-brandText transition-colors">قائمتي</a>
         </nav>
       </div>
 
@@ -131,17 +102,15 @@
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
 
-        <!-- Notification Button -->
-        <button class="w-10 h-10 rounded-full bg-brandSec hover:bg-brandCard flex items-center justify-center text-brandMuted hover:text-brandGold transition-all relative">
+        <!-- Notification Button (Clean by default, badge appears only on event) -->
+        <button id="notifBtn" class="w-10 h-10 rounded-full bg-brandSec hover:bg-brandCard flex items-center justify-center text-brandMuted hover:text-brandGold transition-all relative">
           <i class="fa-regular fa-bell"></i>
-          <span class="absolute top-2 left-2 w-2 h-2 rounded-full bg-brandGold"></span>
+          <span id="notifBadge" class="hidden absolute top-2 left-2 w-2 h-2 rounded-full bg-brandGold shadow-[0_0_8px_#E7B86A]"></span>
         </button>
 
         <!-- Profile Button -->
-        <button id="profileBtn" class="flex items-center gap-2 bg-brandSec hover:bg-brandCard px-3 py-1.5 rounded-full border border-brandBorder transition-all">
-          <div class="w-7 h-7 rounded-full bg-brandGold/20 text-brandGold flex items-center justify-center font-bold text-xs">
-            ع
-          </div>
+        <button class="flex items-center gap-2 bg-brandSec hover:bg-brandCard px-3 py-1.5 rounded-full border border-brandBorder transition-all">
+          <div class="w-7 h-7 rounded-full bg-brandGold/20 text-brandGold flex items-center justify-center font-bold text-xs">ع</div>
           <span class="hidden sm:inline text-xs font-semibold">عبادي</span>
         </button>
       </div>
@@ -152,149 +121,133 @@
   <div id="searchBar" class="hidden fixed top-20 left-0 right-0 z-40 bg-brandSec/95 border-b border-brandBorder p-4 backdrop-blur-md">
     <div class="max-w-3xl mx-auto flex items-center gap-3 bg-brandBg px-4 py-2.5 rounded-xl border border-brandBorder">
       <i class="fa-solid fa-magnifying-glass text-brandMuted"></i>
-      <input type="text" id="searchInput" placeholder="ابحث عن فيلم، مسلسل، أو ممثل..." class="bg-transparent text-brandText w-full focus:outline-none text-sm placeholder:text-brandMuted/60">
+      <input type="text" id="searchInput" placeholder="ابحث عن فيلم، مسلسل، أو تصنيف..." class="bg-transparent text-brandText w-full focus:outline-none text-sm placeholder:text-brandMuted/60" oninput="handleSearch(this.value)">
       <button id="closeSearch" class="text-brandMuted hover:text-brandText"><i class="fa-solid fa-xmark"></i></button>
     </div>
   </div>
 
   <!-- ================= HERO SECTION ================= -->
-  <section class="relative min-h-[85vh] flex items-center pt-20 overflow-hidden">
-    <!-- Hero Background Image -->
+  <section id="heroSection" class="relative min-h-[85vh] flex items-center pt-20 overflow-hidden">
     <div class="absolute inset-0 z-0">
-      <img id="heroImage" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop" class="w-full h-full object-cover object-center scale-105 transition-all duration-700">
+      <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop" class="w-full h-full object-cover object-center scale-105">
       <div class="absolute inset-0 hero-gradient"></div>
     </div>
 
-    <!-- Hero Content -->
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12">
       <div class="max-w-2xl space-y-4">
-        
-        <!-- Badges -->
         <div class="flex items-center gap-3 text-xs font-bold">
           <span class="bg-brandGold text-brandBg px-2.5 py-1 rounded-md uppercase tracking-wider">حصرياً على شوف</span>
           <span class="bg-brandCard text-brandMuted border border-brandBorder px-2.5 py-1 rounded-md"><i class="fa-solid fa-star text-brandGold ml-1"></i> IMDb 8.9</span>
           <span class="text-brandMuted">2026 • دراما / إثارة</span>
         </div>
 
-        <!-- Main Title -->
-        <h1 id="heroTitle" class="text-4xl sm:text-6xl font-extrabold text-brandText tracking-tight leading-tight">
-          السطح
-        </h1>
-        <p id="heroSubtitle" class="text-brandGold font-semibold text-lg sm:text-xl">رحلة في ذاكرة مدينة</p>
-
-        <!-- Description -->
-        <p id="heroOverview" class="text-brandMuted text-sm sm:text-base leading-relaxed line-clamp-3">
-          في قلب بغداد، تتقاطع مصائر مجموعة من الأشخاص في يوم واحد، لنكتشف أسرار المدينة وتاريخها المليء بالأمل والتحديات من خلال مشاهد سينمائية ساحرة.
+        <h1 class="text-4xl sm:text-6xl font-extrabold text-brandText tracking-tight">السطح</h1>
+        <p class="text-brandGold font-semibold text-lg sm:text-xl">رحلة في ذاكرة مدينة</p>
+        <p class="text-brandMuted text-sm sm:text-base leading-relaxed line-clamp-3">
+          في قلب بغداد، تتقاطع مصائر مجموعة من الأشخاص في يوم واحد، لنكتشف أسرار المدينة وتاريخها المليء بالأمل والتحديات.
         </p>
 
-        <!-- Buttons -->
         <div class="flex items-center gap-4 pt-4">
           <button onclick="playMovie('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', 'السطح')" class="bg-brandGold hover:bg-brandGoldHover text-brandBg font-bold px-7 py-3 rounded-xl flex items-center gap-2 transition-all transform hover:scale-105 shadow-lg shadow-brandGold/10">
-            <i class="fa-solid fa-play"></i>
-            شاهد الآن
+            <i class="fa-solid fa-play"></i> شاهد الآن
           </button>
           <button onclick="toggleWatchlist('السطح')" class="bg-brandCard/80 hover:bg-brandCard text-brandText border border-brandBorder font-semibold px-6 py-3 rounded-xl flex items-center gap-2 transition-all backdrop-blur-sm">
-            <i class="fa-solid fa-plus"></i>
-            أضف إلى قائمتي
+            <i class="fa-solid fa-plus"></i> أضف إلى قائمتي
           </button>
-        </div>
-
-        <!-- Carousel Indicators -->
-        <div class="flex items-center gap-2 pt-8">
-          <span class="w-8 h-1.5 rounded-full bg-brandGold"></span>
-          <span class="w-2 h-1.5 rounded-full bg-brandBorder"></span>
-          <span class="w-2 h-1.5 rounded-full bg-brandBorder"></span>
-          <span class="w-2 h-1.5 rounded-full bg-brandBorder"></span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= MAIN CONTENT ================= -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 -mt-10 relative z-20 pb-20">
+  <!-- ================= MAIN CONTENT & CATALOG ================= -->
+  <main id="catalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 py-12 relative z-20">
 
-    <!-- 1. أحدث الإضافات (Highest Rated & Latest) -->
-    <section id="trending">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
-          <span class="w-2 h-6 bg-brandGold rounded-full"></span>
-          أحدث الإضافات والأعلى تقييماً
-        </h2>
-        <a href="#" class="text-xs text-brandGold hover:underline font-semibold">عرض الكل</a>
-      </div>
+    <!-- Header for Dynamic Filter Results -->
+    <div id="filterHeader" class="hidden items-center justify-between border-b border-brandBorder pb-4">
+      <h2 id="filterTitle" class="text-2xl font-bold text-brandGold flex items-center gap-2">نتائج التصنيف</h2>
+      <button onclick="resetFilter()" class="text-xs bg-brandSec border border-brandBorder px-3 py-1.5 rounded-lg text-brandMuted hover:text-brandText">إلغاء التصفية العودة للرئيسية</button>
+    </div>
 
-      <div id="latestContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        <!-- Skeleton loaders replaced dynamically -->
-      </div>
-    </section>
+    <!-- Default Homepage Sections -->
+    <div id="defaultSections" class="space-y-16">
+      
+      <!-- القسم الأول: أحدث الإضافات والأعلى تقييماً -->
+      <section>
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <span class="w-2 h-6 bg-brandGold rounded-full"></span> أحدث الإضافات والأعلى تقييماً
+          </h2>
+          <button onclick="filterByCategory('أفلام')" class="text-xs text-brandGold hover:underline font-semibold">عرض الكل</button>
+        </div>
+        <div id="latestContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+      </section>
 
-    <!-- 2. أفلام عراقية (Iraqi Cinema Showcase) -->
-    <section id="iraqi">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
-          <span class="w-2 h-6 bg-brandGold rounded-full"></span>
-          أفلام عراقية
-        </h2>
-        <a href="#" class="text-xs text-brandGold hover:underline font-semibold">عرض الكل</a>
-      </div>
+      <!-- القسم الثاني: أفلام عراقية -->
+      <section>
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <span class="w-2 h-6 bg-brandGold rounded-full"></span> أفلام عراقية مميزة
+          </h2>
+          <button onclick="filterByCategory('أفلام عراقية')" class="text-xs text-brandGold hover:underline font-semibold">عرض الكل</button>
+        </div>
+        <div id="iraqiContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5"></div>
+      </section>
 
-      <div id="iraqiContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-        <!-- Cards inserted via JS -->
-      </div>
-    </section>
+      <!-- القسم الثالث: التصنيفات -->
+      <section id="categories">
+        <div class="mb-6">
+          <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <span class="w-2 h-6 bg-brandGold rounded-full"></span> التصنيفات
+          </h2>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+          <button onclick="filterByCategory('مسلسلات')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+            <i class="fa-solid fa-tv text-xl text-brandGold group-hover:text-brandBg"></i>
+            <span class="text-xs font-bold">مسلسلات</span>
+          </button>
+          <button onclick="filterByCategory('أفلام عراقية')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+            <i class="fa-solid fa-film text-xl text-brandGold group-hover:text-brandBg"></i>
+            <span class="text-xs font-bold">أفلام عراقية</span>
+          </button>
+          <button onclick="filterByCategory('وثائقي')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+            <i class="fa-solid fa-camera-retro text-xl text-brandGold group-hover:text-brandBg"></i>
+            <span class="text-xs font-bold">وثائقي</span>
+          </button>
+          <button onclick="filterByCategory('إثارة')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+            <i class="fa-solid fa-user-ninja text-xl text-brandGold group-hover:text-brandBg"></i>
+            <span class="text-xs font-bold">إثارة</span>
+          </button>
+          <button onclick="filterByCategory('رعب')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+            <i class="fa-solid fa-ghost text-xl text-brandGold group-hover:text-brandBg"></i>
+            <span class="text-xs font-bold">رعب</span>
+          </button>
+          <button onclick="filterByCategory('كوميديا')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+            <i class="fa-solid fa-face-laugh-beam text-xl text-brandGold group-hover:text-brandBg"></i>
+            <span class="text-xs font-bold">كوميديا</span>
+          </button>
+          <button onclick="filterByCategory('دراما')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+            <i class="fa-solid fa-masks-theater text-xl text-brandGold group-hover:text-brandBg"></i>
+            <span class="text-xs font-bold">دراما</span>
+          </button>
+          <button onclick="filterByCategory('أكشن')" class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
+            <i class="fa-solid fa-explosion text-xl text-brandGold group-hover:text-brandBg"></i>
+            <span class="text-xs font-bold">أكشن</span>
+          </button>
+        </div>
+      </section>
 
-    <!-- 3. التصنيفات (Categories Grid) -->
-    <section id="categories">
-      <div class="mb-6">
-        <h2 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
-          <span class="w-2 h-6 bg-brandGold rounded-full"></span>
-          التصنيفات
-        </h2>
-      </div>
+    </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-        <button class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
-          <i class="fa-solid fa-tv text-xl text-brandGold group-hover:text-brandBg"></i>
-          <span class="text-xs font-bold">مسلسلات</span>
-        </button>
-        <button class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
-          <i class="fa-solid fa-film text-xl text-brandGold group-hover:text-brandBg"></i>
-          <span class="text-xs font-bold">أفلام عراقية</span>
-        </button>
-        <button class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
-          <i class="fa-solid fa-camera-retro text-xl text-brandGold group-hover:text-brandBg"></i>
-          <span class="text-xs font-bold">وثائقي</span>
-        </button>
-        <button class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
-          <i class="fa-solid fa-user-ninja text-xl text-brandGold group-hover:text-brandBg"></i>
-          <span class="text-xs font-bold">إثارة</span>
-        </button>
-        <button class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
-          <i class="fa-solid fa-ghost text-xl text-brandGold group-hover:text-brandBg"></i>
-          <span class="text-xs font-bold">رعب</span>
-        </button>
-        <button class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
-          <i class="fa-solid fa-face-laugh-beam text-xl text-brandGold group-hover:text-brandBg"></i>
-          <span class="text-xs font-bold">كوميديا</span>
-        </button>
-        <button class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
-          <i class="fa-solid fa-masks-theater text-xl text-brandGold group-hover:text-brandBg"></i>
-          <span class="text-xs font-bold">دراما</span>
-        </button>
-        <button class="bg-brandSec hover:bg-brandGold hover:text-brandBg border border-brandBorder p-4 rounded-xl flex flex-col items-center gap-2 transition-all group">
-          <i class="fa-solid fa-explosion text-xl text-brandGold group-hover:text-brandBg"></i>
-          <span class="text-xs font-bold">أكشن</span>
-        </button>
-      </div>
-    </section>
+    <!-- Filtered Results Grid (Hidden by default, shown when category or search is active) -->
+    <div id="dynamicGridContainer" class="hidden">
+      <div id="dynamicGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+    </div>
 
   </main>
 
   <!-- ================= PLYR PLAYER MODAL ================= -->
   <div id="playerModal" class="fixed inset-0 z-50 bg-black/95 hidden items-center justify-center p-2 sm:p-6 backdrop-blur-lg">
     <div class="relative w-full max-w-5xl bg-brandSec rounded-2xl overflow-hidden border border-brandBorder shadow-2xl">
-      
-      <!-- Modal Header -->
       <div class="p-4 bg-brandCard flex items-center justify-between border-b border-brandBorder">
         <h3 id="modalMovieTitle" class="font-bold text-brandGold text-base sm:text-lg flex items-center gap-2">
           <i class="fa-solid fa-circle-play"></i> جاري العرض
@@ -303,8 +256,6 @@
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-
-      <!-- Player Container -->
       <div class="aspect-video w-full bg-black">
         <video id="plyrPlayer" controls playsinline>
           <source id="plyrSource" src="" type="video/mp4" />
@@ -318,7 +269,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-right flex flex-col sm:flex-row items-center justify-between gap-6">
       <div>
         <p class="text-brandText font-bold text-lg mb-1">شوف | SHOOAF</p>
-        <p class="text-xs text-brandMuted">منصة البث السينمائية العربية الأولى للإنتاجات العرقية والعالمية.</p>
+        <p class="text-xs text-brandMuted">منصة البث السينمائية العربية الأولى للإنتاجات العراقية والعالمية.</p>
       </div>
       <div class="flex items-center gap-6 text-xs text-brandMuted">
         <a href="#" class="hover:text-brandGold transition-colors">سياسة الخصوصية</a>
@@ -328,79 +279,167 @@
     </div>
   </footer>
 
-  <!-- Plyr.js Library -->
+  <!-- Plyr.js JS -->
   <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 
   <script>
-    // Initialize Plyr Video Player
+    // Initialize Plyr Player
     const player = new Plyr('#plyrPlayer', {
       controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'fullscreen'],
       i18n: { play: 'تشغيل', pause: 'إيقاف مؤقت', mute: 'كتم الصوت', fullscreen: 'ملء الشاشة' }
     });
 
-    // Sample Movies Data (Fallbacks / Local Highlights)
-    const iraqiMovies = [
-      { title: 'رحلة بغداد', year: '2025', genre: 'دراما • إثارة', rating: '8.7', poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' },
-      { title: 'البيت', year: '2024', genre: 'غموض • دراما', rating: '8.4', poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
-      { title: 'وادي الأمل', year: '2025', genre: 'دراما تاريخية', rating: '9.0', poster: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
-      { title: 'كابتن عراقي', year: '2023', genre: 'كوميديا • رياضة', rating: '8.1', poster: 'https://images.unsplash.com/photo-1574267432553-4b4628081c31?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' },
-      { title: 'أحلام بغداد', year: '2024', genre: 'دراما', rating: '8.8', poster: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
+    // Central Movie & Series Database
+    const mediaDatabase = [
+      { id: 1, title: 'السطح', type: 'movie', category: 'دراما', year: '2026', rating: '8.9', poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
+      { id: 2, title: 'رحلة بغداد', type: 'movie', category: 'أفلام عراقية', year: '2025', rating: '8.7', poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' },
+      { id: 3, title: 'صراع العروش العراقية', type: 'series', category: 'مسلسلات', year: '2026', rating: '9.2', poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+      { id: 4, title: 'وادي الأمل', type: 'series', category: 'مسلسلات', year: '2025', rating: '9.0', poster: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
+      { id: 5, title: 'كابتن عراقي', type: 'movie', category: 'أفلام عراقية', year: '2023', rating: '8.1', poster: 'https://images.unsplash.com/photo-1574267432553-4b4628081c31?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' },
+      { id: 6, title: 'أسرار دجلة', type: 'documentary', category: 'وثائقي', year: '2024', rating: '8.8', poster: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+      { id: 7, title: 'الظل الغامض', type: 'movie', category: 'إثارة', year: '2026', rating: '8.9', poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
+      { id: 8, title: 'ليلة الرعب', type: 'movie', category: 'رعب', year: '2025', rating: '7.9', poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4' },
+      { id: 9, title: 'ضحكات بغدادية', type: 'movie', category: 'كوميديا', year: '2024', rating: '8.3', poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' },
+      { id: 10, title: 'مهمة مستحيلة', type: 'movie', category: 'أكشن', year: '2026', rating: '9.1', poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
+      { id: 11, title: 'آخر أيام الصيف', type: 'movie', category: 'أفلام عراقية', year: '2025', rating: '8.6', poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4' },
+      { id: 12, title: 'البيت', type: 'series', category: 'مسلسلات', year: '2024', rating: '8.4', poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop', video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
     ];
 
-    const latestMovies = [
-      { title: 'الظل', rating: '8.9', year: '2026', poster: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop' },
-      { title: 'آخر أيام الصيف', rating: '8.6', year: '2025', poster: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop' },
-      { title: 'صدى', rating: '8.3', year: '2025', poster: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=600&auto=format&fit=crop' },
-      { title: 'زهرة', rating: '8.8', year: '2024', poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop' },
-      { title: 'الطريق', rating: '8.5', year: '2026', poster: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop' },
-      { title: 'بغداد حلم', rating: '9.1', year: '2026', poster: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=600&auto=format&fit=crop' }
-    ];
+    let watchlist = [];
 
-    // Render Iraqi Movies Section
-    const iraqiContainer = document.getElementById('iraqiContainer');
-    iraqiMovies.forEach(movie => {
-      iraqiContainer.innerHTML += `
-        <div onclick="playMovie('${movie.video}', '${movie.title}')" class="bg-brandSec rounded-xl overflow-hidden border border-brandBorder hover:border-brandGold/50 transition-all duration-300 group cursor-pointer shadow-lg hover:-translate-y-1.5">
+    // Initial Render of Homepage Sections
+    function renderHomeSections() {
+      const latestContainer = document.getElementById('latestContainer');
+      const iraqiContainer = document.getElementById('iraqiContainer');
+      
+      latestContainer.innerHTML = '';
+      iraqiContainer.innerHTML = '';
+
+      mediaDatabase.slice(0, 6).forEach(item => {
+        latestContainer.innerHTML += createCardHTML(item);
+      });
+
+      mediaDatabase.filter(i => i.category === 'أفلام عراقية' || i.type === 'movie').slice(0, 5).forEach(item => {
+        iraqiContainer.innerHTML += createCardHTML(item);
+      });
+    }
+
+    function createCardHTML(item) {
+      return `
+        <div onclick="playMovie('${item.video}', '${item.title}')" class="bg-brandSec rounded-xl overflow-hidden border border-brandBorder hover:border-brandGold/50 transition-all duration-300 group cursor-pointer shadow-lg hover:-translate-y-1">
           <div class="relative aspect-[2/3] overflow-hidden">
-            <img src="${movie.poster}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-brandBg via-transparent opacity-80"></div>
-            <span class="absolute top-2 right-2 bg-brandBg/80 backdrop-blur-md text-brandGold text-xs font-bold px-2 py-1 rounded border border-brandBorder">
-              ⭐ ${movie.rating}
+            <img src="${item.poster}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <span class="absolute top-2 right-2 bg-brandBg/90 text-brandGold text-[11px] font-bold px-2 py-0.5 rounded border border-brandBorder">
+              ⭐ ${item.rating}
             </span>
             <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-              <div class="w-12 h-12 rounded-full bg-brandGold text-brandBg flex items-center justify-center font-bold text-lg shadow-xl">
-                <i class="fa-solid fa-play mr-0.5"></i>
+              <div class="w-10 h-10 rounded-full bg-brandGold text-brandBg flex items-center justify-center font-bold shadow-xl">
+                <i class="fa-solid fa-play"></i>
               </div>
             </div>
           </div>
           <div class="p-3">
-            <h3 class="font-bold text-sm text-brandText group-hover:text-brandGold transition-colors truncate">${movie.title}</h3>
-            <p class="text-xs text-brandMuted mt-1">${movie.year} • ${movie.genre}</p>
+            <h4 class="font-bold text-xs sm:text-sm text-brandText group-hover:text-brandGold transition-colors truncate">${item.title}</h4>
+            <p class="text-[11px] text-brandMuted mt-1">${item.year} • ${item.category}</p>
           </div>
         </div>
       `;
-    });
+    }
 
-    // Render Latest Section
-    const latestContainer = document.getElementById('latestContainer');
-    latestMovies.forEach(movie => {
-      latestContainer.innerHTML += `
-        <div onclick="playMovie('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', '${movie.title}')" class="bg-brandSec rounded-xl overflow-hidden border border-brandBorder hover:border-brandGold/50 transition-all duration-300 group cursor-pointer shadow-md">
-          <div class="relative aspect-[2/3] overflow-hidden">
-            <img src="${movie.poster}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-            <span class="absolute top-2 right-2 bg-brandBg/90 text-brandGold text-[10px] font-bold px-1.5 py-0.5 rounded">
-              ⭐ ${movie.rating}
-            </span>
-          </div>
-          <div class="p-2.5">
-            <h4 class="font-bold text-xs text-brandText truncate">${movie.title}</h4>
-            <p class="text-[10px] text-brandMuted mt-0.5">${movie.year}</p>
-          </div>
-        </div>
-      `;
-    });
+    // Filter by Category or Navigation Link
+    function filterByCategory(categoryName) {
+      document.getElementById('defaultSections').classList.add('hidden');
+      document.getElementById('filterHeader').classList.remove('hidden');
+      document.getElementById('filterHeader').classList.add('flex');
+      document.getElementById('dynamicGridContainer').classList.remove('hidden');
+      document.getElementById('filterTitle').innerText = `تصنيف: ${categoryName}`;
 
-    // Open Player Function
+      const grid = document.getElementById('dynamicGrid');
+      grid.innerHTML = '';
+
+      let results = [];
+      if (categoryName === 'أفلام') {
+        results = mediaDatabase.filter(i => i.type === 'movie');
+      } else if (categoryName === 'مسلسلات') {
+        results = mediaDatabase.filter(i => i.type === 'series');
+      } else {
+        results = mediaDatabase.filter(i => i.category === categoryName);
+      }
+
+      if (results.length === 0) {
+        grid.innerHTML = `<p class="text-brandMuted col-span-full text-center py-12">لا توجد عناوين متاحة حالياً تحت هذا التصنيف.</p>`;
+        return;
+      }
+
+      results.forEach(item => {
+        grid.innerHTML += createCardHTML(item);
+      });
+      window.location.hash = 'catalog';
+    }
+
+    // Filter Watchlist
+    function filterWatchlist() {
+      document.getElementById('defaultSections').classList.add('hidden');
+      document.getElementById('filterHeader').classList.remove('hidden');
+      document.getElementById('filterHeader').classList.add('flex');
+      document.getElementById('dynamicGridContainer').classList.remove('hidden');
+      document.getElementById('filterTitle').innerText = `قائمتي المحفوظة (${watchlist.length})`;
+
+      const grid = document.getElementById('dynamicGrid');
+      grid.innerHTML = '';
+
+      if (watchlist.length === 0) {
+        grid.innerHTML = `<p class="text-brandMuted col-span-full text-center py-12">قائمتك فارغة حالياً. قم بإضافة أفلام ومسلسلات لمشاهدتها لاحقاً!</p>`;
+        return;
+      }
+
+      watchlist.forEach(title => {
+        const item = mediaDatabase.find(i => i.title === title);
+        if (item) grid.innerHTML += createCardHTML(item);
+      });
+      window.location.hash = 'catalog';
+    }
+
+    // Reset Filter / Home
+    function resetFilter() {
+      document.getElementById('defaultSections').classList.remove('hidden');
+      document.getElementById('filterHeader').classList.add('hidden');
+      document.getElementById('filterHeader').classList.remove('flex');
+      document.getElementById('dynamicGridContainer').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Real-time Instant Search
+    function handleSearch(query) {
+      if (!query.trim()) {
+        resetFilter();
+        return;
+      }
+      document.getElementById('defaultSections').classList.add('hidden');
+      document.getElementById('filterHeader').classList.remove('hidden');
+      document.getElementById('filterHeader').classList.add('flex');
+      document.getElementById('dynamicGridContainer').classList.remove('hidden');
+      document.getElementById('filterTitle').innerText = `نتائج البحث عن: "${query}"`;
+
+      const grid = document.getElementById('dynamicGrid');
+      grid.innerHTML = '';
+
+      const matches = mediaDatabase.filter(i => 
+        i.title.toLowerCase().includes(query.toLowerCase()) || 
+        i.category.toLowerCase().includes(query.toLowerCase())
+      );
+
+      if (matches.length === 0) {
+        grid.innerHTML = `<p class="text-brandMuted col-span-full text-center py-12">عذراً، لم نجد أي نتائج تطابق بحثك.</p>`;
+        return;
+      }
+
+      matches.forEach(item => {
+        grid.innerHTML += createCardHTML(item);
+      });
+    }
+
+    // Play Movie via Plyr Modal
     function playMovie(videoUrl, title) {
       document.getElementById('modalMovieTitle').innerText = title;
       player.source = {
@@ -413,25 +452,36 @@
       player.play();
     }
 
-    // Close Player Function
     function closePlayer() {
       player.stop();
       document.getElementById('playerModal').classList.add('hidden');
       document.getElementById('playerModal').classList.remove('flex');
     }
 
+    // Watchlist & Notification Event Trigger
+    function toggleWatchlist(title) {
+      if (!watchlist.includes(title)) {
+        watchlist.push(title);
+        // Trigger Notification Badge (Gold dot lights up on bell)
+        document.getElementById('notifBadge').classList.remove('hidden');
+        alert(`تمت إضافة "${title}" إلى قائمتي بنجاح!`);
+      } else {
+        alert(`"${title}" موجود مسبقاً في قائمتك.`);
+      }
+    }
+
     // Toggle Search Bar
     document.getElementById('searchBtn').addEventListener('click', () => {
       document.getElementById('searchBar').classList.toggle('hidden');
+      document.getElementById('searchInput').focus();
     });
     document.getElementById('closeSearch').addEventListener('click', () => {
       document.getElementById('searchBar').classList.add('hidden');
+      resetFilter();
     });
 
-    // Watchlist Notification
-    function toggleWatchlist(title) {
-      alert(`تمت إضافة "${title}" إلى قائمة المفضلات بنجاح!`);
-    }
+    // Run initial load
+    renderHomeSections();
   </script>
 </body>
 </html>
