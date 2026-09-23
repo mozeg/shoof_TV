@@ -124,7 +124,7 @@
           <span id="heroMeta" class="text-brandMuted">2026 • دراما / ملحمة</span>
         </div>
 
-        <h1 id="heroTitle" class="text-4xl sm:text-6xl font-extrabold text-brandText tracking-tight">أحدث الأفلام العالمية والعراقية</h1>
+        <h1 id="heroTitle" class="text-4xl sm:text-6xl font-extrabold text-brandText tracking-tight">أحدث الأفلام والمسلسلات العالمية</h1>
         <p id="heroTagline" class="text-brandGold font-semibold text-lg sm:text-xl">بث مباشر بجودة عالية عبر Vidsrc</p>
         <p id="heroDesc" class="text-brandMuted text-sm sm:text-base leading-relaxed line-clamp-3">
           استمتع بأحدث الأفلام والمسلسلات مع مشغل Vidsrc السريع والآمن، مصنفة حسب الأقسام لتسهيل التصفح.
@@ -348,7 +348,6 @@
     'أكشن': 28, 'كوميديا': 35, 'دراما': 18, 'رعب': 27, 'إثارة': 53, 'وثائقي': 99
   };
 
-  // قاعدة بيانات احتياطية تضم أفلام ومسلسلات جاهزة للعمل فوراً عبر Vidsrc
   const fallbackMediaDatabase = [
     {
       id: 1, title: 'السطح', type: 'movie', category: 'دراما', year: '2026', rating: '8.9',
@@ -367,29 +366,23 @@
       tmdbId: 238
     },
     {
-      id: 3, title: 'Inception', type: 'movie', category: 'أكشن', year: '2010', rating: '8.8',
-      poster: 'https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/original/s3TBrRGB1iv7DICDrpIXfZjXkMA.jpg',
-      description: 'لص يسرق أسرار الشركات من خلال اختراق الأحلام يواجه مهمة زرع فكرة في عقل رئيس شركة كبرى.',
-      cast: ['Leonardo DiCaprio', 'Joseph Gordon-Levitt', 'Elliot Page'],
-      tmdbId: 27205
-    },
-    {
-      id: 4, title: 'Interstellar', type: 'movie', category: 'دراما', year: '2014', rating: '8.7',
-      poster: 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
-      backdrop: 'https://image.tmdb.org/t/p/original/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg',
-      description: 'مجموعة من رواد الفضاء يرحلون عبر ثقب وادي كوني للبحث عن وطن بديل للبشرية.',
-      cast: ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain'],
-      tmdbId: 157336
-    },
-    {
-      id: 5, title: 'Breaking Bad', type: 'series', category: 'مسلسلات', year: '2008', rating: '9.5',
+      id: 3, title: 'Breaking Bad', type: 'series', category: 'مسلسلات', year: '2008', rating: '9.5',
       poster: 'https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',
       backdrop: 'https://image.tmdb.org/t/p/original/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg',
       description: 'معلم كيمياء يعاني من مرض السرطان يتحول إلى إنتاج وبيع المخدرات لتأمين مستقبل عائلته.',
       cast: ['Bryan Cranston', 'Aaron Paul'],
       tmdbId: 1396,
       tvId: 1396,
+      tvSeasons: [{ season_number: 1, name: 'الموسم الأول' }, { season_number: 2, name: 'الموسم الثاني' }]
+    },
+    {
+      id: 4, title: 'House of the Dragon', type: 'series', category: 'مسلسلات', year: '2022', rating: '8.5',
+      poster: 'https://image.tmdb.org/t/p/w500/z2yahl2SKmrDlv018pYfP6f5M05.jpg',
+      backdrop: 'https://image.tmdb.org/t/p/original/etj8E2o0ZW0HkDRPPxPCXO3rKjP.jpg',
+      description: 'قصة عائلة التارجارين وصراعهم الشهير على العرش الحديدي في قارة وستروس.',
+      cast: ['Emma D\'Arcy', 'Matt Smith'],
+      tmdbId: 94997,
+      tvId: 94997,
       tvSeasons: [{ season_number: 1, name: 'الموسم الأول' }, { season_number: 2, name: 'الموسم الثاني' }]
     }
   ];
@@ -474,7 +467,6 @@
       }
     }
 
-    // إذا فشل الاتصال بـ TMDb أو لم تتوفر نتائج، يتم عرض العناصر الاحتياطية تلقائياً
     if (itemsList.length === 0) {
       itemsList = fallbackMediaDatabase.map(i => ({ ...i, source: 'fallback' }));
     }
@@ -487,32 +479,33 @@
     });
   }
 
+  async function discoverPopular(mediaType) {
+    let list = [];
+    if (isTmdbConfigured()) {
+      const endpoint = mediaType === 'tv' ? 'tv/popular' : 'movie/popular';
+      const data = await tmdbFetch(endpoint);
+      if (data && data.results) {
+        list = data.results.slice(0, 15).map(r => tmdbToUnified(r, mediaType));
+      }
+    }
+    if (list.length === 0) {
+      let typeMatch = mediaType === 'tv' ? 'series' : 'movie';
+      list = fallbackMediaDatabase.filter(i => i.type === typeMatch).map(i => ({ ...i, source: 'fallback' }));
+    }
+    return list.map(i => registerItem(mediaToUnified(i)));
+  }
+
   async function discoverByGenre(categoryName) {
     const genreId = GENRE_MAP[categoryName];
     let list = [];
     if (genreId && isTmdbConfigured()) {
       const data = await tmdbFetch('discover/movie', { with_genres: genreId, sort_by: 'popularity.desc' });
       if (data && data.results) {
-        list = data.results.slice(0, 10).map(r => tmdbToUnified(r, 'movie'));
+        list = data.results.slice(0, 12).map(r => tmdbToUnified(r, 'movie'));
       }
     }
     if (list.length === 0) {
       list = fallbackMediaDatabase.filter(i => i.category === categoryName || categoryName === 'أفلام').map(i => ({ ...i, source: 'fallback' }));
-    }
-    return list.map(i => registerItem(mediaToUnified(i)));
-  }
-
-  async function discoverPopular(mediaType) {
-    let list = [];
-    if (isTmdbConfigured()) {
-      const data = await tmdbFetch(mediaType === 'tv' ? 'tv/popular' : 'movie/popular');
-      if (data && data.results) {
-        list = data.results.slice(0, 12).map(r => tmdbToUnified(r, mediaType));
-      }
-    }
-    if (list.length === 0) {
-      let typeMatch = mediaType === 'tv' ? 'series' : 'movie';
-      list = fallbackMediaDatabase.filter(i => i.type === typeMatch).map(i => ({ ...i, source: 'fallback' }));
     }
     return list.map(i => registerItem(mediaToUnified(i)));
   }
@@ -721,9 +714,14 @@
     const grid = document.getElementById('dynamicGrid');
     grid.innerHTML = `<p class="col-span-full flex items-center justify-center gap-2 text-brandMuted py-12"><span class="spinner"></span> جاري التحميل...</p>`;
 
-    let results = await discoverByGenre(categoryName);
-    if (categoryName === 'أفلام') results = await discoverPopular('movie');
-    if (categoryName === 'مسلسلات') results = await discoverPopular('tv');
+    let results = [];
+    if (categoryName === 'مسلسلات') {
+      results = await discoverPopular('tv');
+    } else if (categoryName === 'أفلام') {
+      results = await discoverPopular('movie');
+    } else {
+      results = await discoverByGenre(categoryName);
+    }
 
     grid.innerHTML = '';
     if (results.length === 0) {
